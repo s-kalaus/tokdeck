@@ -8,6 +8,8 @@
     "lint": "./node_modules/.bin/eslint ./service/**/*.js ./lib/**/*.js ./graphql/**/*.js ./bin/**/*.js ./model/**/*.js"
   },
   "dependencies": {
+    "shopify-node-api": "latest",
+    "pug": "latest",
     "bcrypt": "latest",
     "jsonwebtoken": "latest",
     "yup": "latest",

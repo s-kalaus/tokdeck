@@ -1,5 +1,5 @@
 {
-  "name": "tokdeck",
+  "name": "tokdeck-frontend",
   "version": "0.0.0",
   "scripts": {
     "start": "ng serve --host=0.0.0.0 --public-host=tokdeck.kalaus.ru --base-href / --deploy-url / --progress=false",

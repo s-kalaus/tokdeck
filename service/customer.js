@@ -5,12 +5,17 @@ class CustomerService {
     this.app = app;
   }
 
-  async getOne({ customerId }) {
+  async getOne({ customerId, email }) {
+    if (!email && !customerId) {
+      return { success: false, message: 'Incorrent Customer fetch params' };
+    }
+
     const customer = await this.app.sequelize.models.Customers.findOne({
-      attributes: ['firstName', 'lastName', 'email'],
+      attributes: ['customerId', 'firstName', 'lastName', 'email'],
       where: {
-        customerId,
         isDeleted: false,
+        ...(customerId ? { customerId } : {}),
+        ...(email ? { email } : {}),
       },
     });
 
@@ -18,17 +23,21 @@ class CustomerService {
       return { success: false, message: 'Customer Not Found' };
     }
 
-    const { firstName, lastName, email } = customer;
+    const {
+      customerId: theCustomerId,
+      firstName, lastName,
+      email: theEmail,
+    } = customer;
 
-    this.app.logger.info('CustomerService (getOne): %s', customerId);
+    this.app.logger.info('CustomerService (getOne): %s', theCustomerId);
 
     return {
       success: true,
       data: {
-        customerId,
+        customerId: theCustomerId,
         firstName,
         lastName,
-        email,
+        email: theEmail,
       },
     };
   }
@@ -67,7 +76,7 @@ class CustomerService {
       return { success: false, message: 'Customer With This Email Already Exists' };
     }
 
-    const passwordHash = await hash(password, 4);
+    const passwordHash = password ? await hash(password, 4) : null;
 
     const customer = await this.app.sequelize.models.Customers.create({
       email,

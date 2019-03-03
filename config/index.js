@@ -59,6 +59,10 @@ const config = convict({
       format: 'port',
       default: 4300,
     },
+    viewCache: {
+      format: Boolean,
+      default: true,
+    },
   },
   graphql: {
     port: {
@@ -78,6 +82,20 @@ const config = convict({
     ttl: {
       format: Number,
       default: 300,
+    },
+  },
+  shopify: {
+    key: {
+      format: String,
+      default: '',
+    },
+    secret: {
+      format: String,
+      default: '',
+    },
+    scope: {
+      format: Array,
+      default: [],
     },
   },
 });

@@ -1,12 +1,6 @@
 class MessageService {
   constructor(app) {
     this.app = app;
-    setInterval(() => this.add({
-      customerId: 1,
-      type: 'success',
-      title: 'title',
-      message: 'message',
-    }), 5000);
   }
 
   async add({

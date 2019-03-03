@@ -25,6 +25,10 @@ class AuthService {
   }
 
   createToken({ customerId }) {
+    if (!customerId) {
+      return { success: false, message: 'Customer ID Not Set' };
+    }
+
     const token = sign({
       customerId,
       exp: Math.floor(Date.now() / 1000) + this.app.config.get('token.ttl'),

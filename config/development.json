@@ -13,7 +13,8 @@
     "port": 5672
   },
   "express": {
-    "port": 4300
+    "port": 4300,
+    "viewCache": false
   },
   "graphql": {
     "port": 4000
@@ -22,5 +23,10 @@
   "token": {
     "secret": "YsVY4DT%BasUY324",
     "ttl": 2592000
+  },
+  "shopify": {
+    "key": "724297dc6476e387cac99de9a34d44a3",
+    "secret": "4dc8aeae50e2a3f98fade6b15a191272",
+    "scope": ["read_products"]
   }
 }
