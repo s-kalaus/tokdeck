@@ -9,6 +9,8 @@ const permissionsDef = shield({
   },
   TokenResponse: pg.c,
   Customer: pg.c,
+  Message: pg.c,
+  Subscription: pg.c,
   Mutation: {
     customerLogin: allow,
     customerAdd: allow,

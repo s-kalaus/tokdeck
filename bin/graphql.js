@@ -1,6 +1,6 @@
-const AppService = require('../service/app');
+const App = require('../lib/app');
 
-const app = new AppService();
+const app = new App();
 
 app
   .dbConnect()

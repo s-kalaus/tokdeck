@@ -1,8 +1,8 @@
 const fixtures = require('minimist')(process.argv.slice(2))._;
-const AppService = require('../service/app');
+const App = require('../lib/app');
 const { loadFixtures } = require('../lib');
 
-const app = new AppService();
+const app = new App();
 
 app
   .dbConnect()

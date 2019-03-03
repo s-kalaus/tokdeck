@@ -1,7 +1,7 @@
-const AppService = require('../service/app');
+const App = require('../lib/app');
 const { createDbStructure } = require('../lib');
 
-const app = new AppService();
+const app = new App();
 
 app
   .dbConnect()

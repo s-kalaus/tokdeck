@@ -21,6 +21,17 @@ const typeDefs = gql`
     customer: Customer!
     token: String!
   }
+
+  type Subscription {
+    messageAdded: Message
+  }
+
+  type Message {
+    customerId: ID!
+    type: String!
+    title: String
+    message: String
+  }
 `;
 
 module.exports = typeDefs;

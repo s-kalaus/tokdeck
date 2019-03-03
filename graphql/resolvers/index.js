@@ -1,4 +1,10 @@
-const getCustomer = async (_, __, { dataSources }) => dataSources.customerDS.getOne();
+const { withFilter } = require('apollo-server');
+
+const getCustomer = async (
+  _,
+  { customerId } = {},
+  { dataSources },
+) => dataSources.customerDS.getOne({ customerId });
 
 module.exports = {
   Query: {
@@ -28,6 +34,18 @@ module.exports = {
   },
   TokenResponse: {
     customer: getCustomer,
-    token: async (_, __, { dataSources }) => dataSources.authDS.createToken(),
+    token: async (
+      _,
+      { customerId } = {},
+      { dataSources },
+    ) => dataSources.authDS.createToken({ customerId }),
+  },
+  Subscription: {
+    messageAdded: {
+      subscribe: withFilter(
+        (_, __, { app }) => app.pubsub.asyncIterator('newMessage'),
+        (payload, variables, { customerId }) => customerId && `${payload.messageAdded.customerId}` === `${customerId}`,
+      ),
+    },
   },
 };
