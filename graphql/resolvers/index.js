@@ -47,7 +47,7 @@ module.exports = {
     messageAdded: {
       subscribe: withFilter(
         (_, __, { app }) => app.pubsub.asyncIterator('newMessage'),
-        (payload, variables, { customerId }) => customerId && `${payload.messageAdded.customerId}` === `${customerId}`,
+        ({ messageAdded }, _, { customerId }) => customerId && `${messageAdded.customerId}` === `${customerId}`,
       ),
     },
   },

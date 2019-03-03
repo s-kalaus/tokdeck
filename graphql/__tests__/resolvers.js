@@ -1,3 +1,4 @@
+const { PubSub } = require('graphql-subscriptions');
 const resolvers = require('../resolvers');
 
 describe('Resolvers', () => {
@@ -20,6 +21,19 @@ describe('Resolvers', () => {
       it('uses user id from context to lookup trips', async () => {
         getOne.mockReturnValueOnce({ foo: 'fighters' });
         const res = await resolvers.Query.me(null, {}, mockContext);
+        expect(res).toEqual({ foo: 'fighters' });
+      });
+    });
+
+    describe('token', () => {
+      it('call authDS.createToken', async () => {
+        await resolvers.Query.token(null, undefined, mockContext);
+        expect(createToken).toBeCalledWith({ customerId: undefined });
+      });
+
+      it('uses user id from context to lookup trips', async () => {
+        createToken.mockReturnValueOnce({ foo: 'fighters' });
+        const res = await resolvers.Query.token(null, {}, mockContext);
         expect(res).toEqual({ foo: 'fighters' });
       });
     });
@@ -98,6 +112,32 @@ describe('Resolvers', () => {
         createToken.mockReturnValueOnce({ foo: 'fighters' });
         const res = await resolvers.TokenResponse.token(null, params, mockContext);
         expect(res).toEqual({ foo: 'fighters' });
+      });
+    });
+  });
+
+  describe('Subscription', () => {
+    describe('messageAdded', () => {
+      it('call pubsub.asyncIterator', () => {
+        mockContext.pubsub = { asyncIterator: jest.fn() };
+        resolvers.Subscription.messageAdded.subscribe(null, null, { app: mockContext });
+        expect(mockContext.pubsub.asyncIterator).toBeCalledWith('newMessage');
+      });
+
+      it('filter work (target customer)', async () => {
+        mockContext.pubsub = new PubSub();
+        const iterator = resolvers.Subscription.messageAdded
+          .subscribe(null, null, { app: mockContext, customerId: 1 });
+        await mockContext.pubsub.publish('newMessage', { messageAdded: { customerId: 1 } });
+        iterator.next();
+      });
+
+      it('filter work (other customer)', async () => {
+        mockContext.pubsub = new PubSub();
+        const iterator = resolvers.Subscription.messageAdded
+          .subscribe(null, null, { app: mockContext, customerId: 1 });
+        await mockContext.pubsub.publish('newMessage', { messageAdded: { customerId: 2 } });
+        iterator.next();
       });
     });
   });
