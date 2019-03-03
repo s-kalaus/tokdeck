@@ -13,6 +13,24 @@ const validatorsDef = validator({
         .min(8)
         .max(30),
     }),
+    customerAdd: yup.object().shape({
+      email: yup
+        .string()
+        .email()
+        .max(50),
+      password: yup
+        .string()
+        .min(8)
+        .max(30),
+      firstName: yup
+        .string()
+        .min(1)
+        .max(30),
+      lastName: yup
+        .string()
+        .min(1)
+        .max(30),
+    }),
   },
 });
 
