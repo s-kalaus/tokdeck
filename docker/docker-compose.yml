@@ -1,0 +1,58 @@
+version: '3'
+
+networks:
+  tokdeck:
+
+services:
+  tokdeck-mysql-development:
+    build: tokdeck-mysql
+    tty: true
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    volumes:
+     - ./tokdeck-mysql/conf/conf.d:/etc/mysql/conf.d
+     - ./tokdeck-mysql/conf/mysql.conf.d:/etc/mysql/mysql.conf.d
+    networks:
+      tokdeck:
+
+  tokdeck-rabbitmq-development:
+    build: tokdeck-rabbitmq
+    tty: true
+    networks:
+      tokdeck:
+
+  tokdeck-nginx-development:
+    build: tokdeck-nginx
+    tty: true
+    depends_on:
+     - tokdeck-runner-development
+    volumes:
+     - ./tokdeck-nginx/conf/init.sh:/root/host/init.sh
+     - ./tokdeck-nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+     - ./tokdeck-nginx/conf/squid.conf:/etc/squid/squid.conf
+     - ../ssl:/etc/nginx/ssl
+    ports:
+     - "8383:8181"
+    command: ${PROXY_PASSWORD:-}
+    networks:
+      tokdeck:
+        aliases:
+          - tokdeck.kalaus.ru
+          - a.cdn.tokdeck.kalaus.ru
+          - b.cdn.tokdeck.kalaus.ru
+          - c.cdn.tokdeck.kalaus.ru
+          - d.cdn.tokdeck.kalaus.ru
+
+  tokdeck-runner-development:
+    build: tokdeck-development
+    tty: true
+    depends_on:
+     - tokdeck-mysql-development
+     - tokdeck-rabbitmq-development
+    env_file:
+     - ./tokdeck-development/conf/development.env
+    volumes:
+     - ./tokdeck-development/conf/init.sh:/root/host/init.sh
+     - ..:/var/www/tokdeck
+    networks:
+      tokdeck:

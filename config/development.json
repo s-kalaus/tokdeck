@@ -1,0 +1,26 @@
+{
+  "db": {
+    "database": "tokdeck_development",
+    "user": "tokdeck_development",
+    "dialect": "mysql",
+    "host": "localhost",
+    "port": 3306,
+    "loggingToConsole": true,
+    "sync": true
+  },
+  "rabbitmq": {
+    "host": "localhost",
+    "port": 5672
+  },
+  "express": {
+    "port": 4300
+  },
+  "graphql": {
+    "port": 4000
+  },
+  "url": "https://tokdeck.kalaus.ru",
+  "token": {
+    "secret": "YsVY4DT%BasUY324",
+    "ttl": 2592000
+  }
+}
