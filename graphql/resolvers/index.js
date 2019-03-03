@@ -6,9 +6,16 @@ const getCustomer = async (
   { dataSources },
 ) => dataSources.customerDS.getOne({ customerId });
 
+const createToken = async (
+  _,
+  { customerId } = {},
+  { dataSources },
+) => dataSources.authDS.createToken({ customerId });
+
 module.exports = {
   Query: {
     me: getCustomer,
+    token: createToken,
   },
   Mutation: {
     customerLogin: async (
@@ -34,11 +41,7 @@ module.exports = {
   },
   TokenResponse: {
     customer: getCustomer,
-    token: async (
-      _,
-      { customerId } = {},
-      { dataSources },
-    ) => dataSources.authDS.createToken({ customerId }),
+    token: createToken,
   },
   Subscription: {
     messageAdded: {

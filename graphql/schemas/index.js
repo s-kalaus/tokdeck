@@ -2,7 +2,8 @@ const { gql } = require('apollo-server');
 
 const typeDefs = gql`
   type Query {
-    me: Customer
+    me: Customer!
+    token: String!
   }
 
   type Mutation {

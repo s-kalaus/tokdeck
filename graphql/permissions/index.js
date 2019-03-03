@@ -6,6 +6,7 @@ const pg = graphql.permissionsGroups();
 const permissionsDef = shield({
   Query: {
     me: pg.c,
+    token: pg.c,
   },
   TokenResponse: pg.c,
   Customer: pg.c,
