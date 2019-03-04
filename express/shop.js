@@ -42,11 +42,9 @@ class ShopController extends BaseController {
 
     const { token } = resultToken.data;
 
-    return this.render(res, 'index', {
-      shop,
-      customerId,
-      token,
-    });
+    res.cookie('authorization', token);
+
+    return res.redirect('/');
   }
 }
 
