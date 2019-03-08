@@ -1,25 +1,40 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
 import { CookieService } from 'ngx-cookie-service';
 import { HttpClientModule } from '@angular/common/http';
 import { GraphQLModule } from './graphql.module';
+import { JwtModule } from '@auth0/angular-jwt';
+import { RouterModule } from '@angular/router';
+
+import { AppComponent } from '@app/component/app.component';
+import { ErrorComponent } from '@app/component/error.component';
+import { DashboardComponent } from '@app/component/dashboard/dashboard.component';
+import { routes } from '@app/data/routes';
+
+export function tokenGetter() {
+  return null;
+}
 
 @NgModule({
   declarations: [
-    AppComponent
+    ErrorComponent,
+    AppComponent,
+    DashboardComponent,
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
     HttpClientModule,
     GraphQLModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter,
+      },
+    }),
+    RouterModule.forRoot(routes),
   ],
   providers: [
-    CookieService
+    CookieService,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }

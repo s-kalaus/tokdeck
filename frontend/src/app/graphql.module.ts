@@ -1,40 +1,41 @@
-import {NgModule} from '@angular/core';
-import {ApolloModule, APOLLO_OPTIONS} from 'apollo-angular';
-import {HttpLinkModule, HttpLink} from 'apollo-angular-link-http';
-import {InMemoryCache} from 'apollo-cache-inmemory';
+import { NgModule } from '@angular/core';
+import { ApolloModule, APOLLO_OPTIONS } from 'apollo-angular';
+import { HttpLinkModule, HttpLink } from 'apollo-angular-link-http';
+import { InMemoryCache } from 'apollo-cache-inmemory';
 import { WebSocketLink } from 'apollo-link-ws';
 import { split } from 'apollo-link';
 import { getMainDefinition } from 'apollo-utilities';
 import { setContext } from 'apollo-link-context';
-import {UserService} from './user.service';
+import { CustomerService, AuthService } from '@app/service';
 import { OperationDefinitionNode } from 'graphql';
+import { environment } from '@app/../environments/environment';
 
-const uri = 'https://tokdeck.kalaus.ru/graphql';
-const uriSubscription = 'wss://tokdeck.kalaus.ru/subscriptions';
-
-export function createApollo(httpLink: HttpLink, userService: UserService) {
-  const linkHttp = httpLink.create({uri});
+export function createApollo(httpLink: HttpLink, authService: AuthService) {
+  const linkHttp = httpLink.create({
+    uri: environment.graphqlUrl,
+  });
+  const authorization = `Bearer ${authService.getToken()}`;
   const auth = setContext(() => {
     return {
       headers: {
-        authorization: `Bearer ${userService.getToken()}`
-      }
+        authorization,
+      },
     };
   });
 
   const linkSubscription = new WebSocketLink({
-    uri: uriSubscription,
+    uri: environment.subscriptionUrl,
     options: {
       reconnect: true,
       connectionParams: () => {
         return {
-          authorization: `Bearer ${userService.getToken()}`,
+          authorization,
         };
-      }
-    }
+      },
+    },
   });
 
-  userService.subscriptionClient = (<any>linkSubscription).subscriptionClient;
+  authService.subscriptionClient = (<any>linkSubscription).subscriptionClient;
 
   const link = split(
     ({ query }) => {
@@ -56,7 +57,7 @@ export function createApollo(httpLink: HttpLink, userService: UserService) {
     {
       provide: APOLLO_OPTIONS,
       useFactory: createApollo,
-      deps: [HttpLink, UserService],
+      deps: [HttpLink, AuthService],
     },
   ],
 })

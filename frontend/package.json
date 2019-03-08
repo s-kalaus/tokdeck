@@ -32,7 +32,14 @@
     "graphql-tag": "^2.10.1",
     "graphql": "^14.1.1",
     "ngx-cookie-service": "^2.1.0",
-    "subscriptions-transport-ws": "^0.9.15"
+    "subscriptions-transport-ws": "^0.9.15",
+    "bootstrap": "^4.3.1",
+    "ngx-bootstrap": "^3.2.0",
+    "@ngx-translate/core": "^11.0.1",
+    "@ngx-translate/http-loader": "^4.0.0",
+    "@auth0/angular-jwt": "^2.1.0",
+    "noty": "^3.2.0-beta",
+    "ngx-auto-unsubscribe": "^2.4.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.13.0",
@@ -53,6 +60,7 @@
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
+    "tslint-config-airbnb": "^5.11.1",
     "typescript": "~3.2.2"
   }
 }

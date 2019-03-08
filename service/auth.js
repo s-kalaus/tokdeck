@@ -30,7 +30,7 @@ class AuthService {
     }
 
     const token = sign({
-      customerId,
+      customerId: `${customerId}`,
       exp: Math.floor(Date.now() / 1000) + this.app.config.get('token.ttl'),
     }, this.app.config.get('token.secret'));
 
