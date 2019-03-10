@@ -79,18 +79,18 @@ describe('Resolvers', () => {
     });
   });
 
-  describe('TokenResponse', () => {
+  describe('TokenPayload', () => {
     describe('customer', () => {
       const params = { customerId: 1 };
 
       it('call customerDS.getOne', async () => {
-        await resolvers.TokenResponse.customer(null, params, mockContext);
+        await resolvers.TokenPayload.customer(null, params, mockContext);
         expect(getOne).toBeCalledWith(params);
       });
 
       it('uses user id from context to lookup trips', async () => {
         getOne.mockReturnValueOnce({ foo: 'fighters' });
-        const res = await resolvers.TokenResponse.customer(null, params, mockContext);
+        const res = await resolvers.TokenPayload.customer(null, params, mockContext);
         expect(res).toEqual({ foo: 'fighters' });
       });
     });
@@ -99,18 +99,18 @@ describe('Resolvers', () => {
       const params = { customerId: 1 };
 
       it('call authDS.createToken', async () => {
-        await resolvers.TokenResponse.token(null, params, mockContext);
+        await resolvers.TokenPayload.token(null, params, mockContext);
         expect(createToken).toBeCalledWith(params);
       });
 
       it('call authDS.createToken (no customerId)', async () => {
-        await resolvers.TokenResponse.token(null, undefined, mockContext);
+        await resolvers.TokenPayload.token(null, undefined, mockContext);
         expect(createToken).toBeCalledWith({ customerId: undefined });
       });
 
       it('return proper data', async () => {
         createToken.mockReturnValueOnce({ foo: 'fighters' });
-        const res = await resolvers.TokenResponse.token(null, params, mockContext);
+        const res = await resolvers.TokenPayload.token(null, params, mockContext);
         expect(res).toEqual({ foo: 'fighters' });
       });
     });

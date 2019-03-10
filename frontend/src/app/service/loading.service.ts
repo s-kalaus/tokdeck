@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 
 import { LoadingEvent } from '@app/interface';
+import { catchError, finalize, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -53,6 +54,13 @@ export class LoadingService {
   isLoading(area: string = 'global') {
     this.ensureKey(area);
     return this.storage[area].count;
+  }
+
+  auto(observable: Observable<any>, area: string = 'global') {
+    this.start(area);
+    return observable.pipe(
+      finalize(() => this.stop(area)),
+    );
   }
 
   isLoadingAnimated(area: string = 'global') {

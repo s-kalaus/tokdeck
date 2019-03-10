@@ -1,3 +1,5 @@
+const { ApolloError } = require('apollo-server');
+
 class AuthDS {
   constructor(app) {
     this.app = app;
@@ -11,7 +13,7 @@ class AuthDS {
     const resultAuth = await this.app.service.AuthService.login({ login, password });
 
     if (!resultAuth.success) {
-      throw new Error(resultAuth.message);
+      throw new ApolloError(resultAuth.message, 500, resultAuth);
     }
 
     const { customerId, roleName } = resultAuth.data;
@@ -26,7 +28,7 @@ class AuthDS {
     const resultToken = await this.app.service.AuthService.createToken({ customerId });
 
     if (!resultToken.success) {
-      throw new Error(resultToken.message);
+      throw new ApolloError(resultToken.message, 500, resultToken);
     }
 
     const { token } = resultToken.data;

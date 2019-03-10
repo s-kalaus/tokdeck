@@ -1,3 +1,5 @@
+const { ApolloError } = require('apollo-server');
+
 class CustomerDS {
   constructor(app) {
     this.app = app;
@@ -11,7 +13,7 @@ class CustomerDS {
     const resultCustomer = await this.app.service.CustomerService.getOne({ customerId });
 
     if (!resultCustomer.success) {
-      throw new Error(resultCustomer.message);
+      throw new ApolloError(resultCustomer.message, 500, resultCustomer);
     }
 
     const { firstName, lastName, email } = resultCustomer.data;
@@ -38,7 +40,7 @@ class CustomerDS {
     });
 
     if (!resultAdd.success) {
-      throw new Error(resultAdd.message);
+      throw new ApolloError(resultAdd.message, 500, resultAdd);
     }
 
     return this.app.dataSource.authDS.login({ login: email, password });

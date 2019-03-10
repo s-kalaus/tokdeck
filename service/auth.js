@@ -54,7 +54,13 @@ class AuthService {
     });
 
     if (!customer) {
-      return { success: false, message: 'Customer Not Found' };
+      return {
+        success: false,
+        message: 'Customer Not Found',
+        form: {
+          login: 'exist',
+        },
+      };
     }
 
     const { customerId, passwordHash } = customer;
@@ -66,7 +72,13 @@ class AuthService {
     const resultCompare = await compare(password, passwordHash);
 
     if (!resultCompare) {
-      return { success: false, message: 'Password Incorrect' };
+      return {
+        success: false,
+        message: 'Password Incorrect',
+        form: {
+          password: 'password',
+        },
+      };
     }
 
     this.app.logger.info('AuthService (login): %s', customerId);

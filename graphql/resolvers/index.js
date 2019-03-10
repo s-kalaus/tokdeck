@@ -1,54 +1,36 @@
-const { withFilter } = require('apollo-server');
-
-const getCustomer = async (
-  _,
-  { customerId } = {},
-  { dataSources },
-) => dataSources.customerDS.getOne({ customerId });
-
-const createToken = async (
-  _,
-  { customerId } = {},
-  { dataSources },
-) => dataSources.authDS.createToken({ customerId });
+const customerGetOne = require('./customer-get-one');
+const customerLogin = require('./customer-login');
+const customerAdd = require('./customer-add');
+const auctionGetOne = require('./auction-get-one');
+const auctionGetAll = require('./auction-get-all');
+const auctionAdd = require('./auction-add');
+const auctionUpdate = require('./auction-update');
+const auctionRemove = require('./auction-remove');
+const tokenGetOne = require('./token-get-one');
+const messageAdded = require('./message-added');
 
 module.exports = {
   Query: {
-    me: getCustomer,
-    token: createToken,
+    me: customerGetOne,
+    auction: auctionGetOne,
+    auctions: auctionGetAll,
+    token: tokenGetOne,
   },
   Mutation: {
-    customerLogin: async (
-      _,
-      { login, password },
-      { dataSources },
-    ) => dataSources.authDS.login({ login, password }),
-    customerAdd: async (
-      _,
-      {
-        email,
-        password,
-        firstName,
-        lastName,
-      },
-      { dataSources },
-    ) => dataSources.customerDS.add({
-      email,
-      password,
-      firstName,
-      lastName,
-    }),
-  },
-  TokenResponse: {
-    customer: getCustomer,
-    token: createToken,
+    customerLogin,
+    customerAdd,
+    auctionAdd,
+    auctionUpdate,
+    auctionRemove,
   },
   Subscription: {
-    messageAdded: {
-      subscribe: withFilter(
-        (_, __, { app }) => app.pubsub.asyncIterator('newMessage'),
-        ({ messageAdded }, _, { customerId }) => customerId && `${messageAdded.customerId}` === `${customerId}`,
-      ),
-    },
+    messageAdded,
+  },
+  TokenPayload: {
+    customer: customerGetOne,
+    token: tokenGetOne,
+  },
+  AuctionPayload: {
+    auction: auctionGetOne,
   },
 };

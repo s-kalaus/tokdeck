@@ -27,6 +27,9 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/noty/lib/noty.css",
+              "node_modules/noty/lib/themes/bootstrap-v4.css",
+              "node_modules/@mdi/font/css/materialdesignicons.min.css",
               "src/styles.scss"
             ],
             "scripts": [],

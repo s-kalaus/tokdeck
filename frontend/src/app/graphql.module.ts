@@ -14,12 +14,12 @@ export function createApollo(httpLink: HttpLink, authService: AuthService) {
   const linkHttp = httpLink.create({
     uri: environment.graphqlUrl,
   });
-  const authorization = `Bearer ${authService.getToken()}`;
+
   const auth = setContext(() => {
     return {
-      headers: {
-        authorization,
-      },
+      headers: authService.getToken() ? {
+        authorization: `Bearer ${authService.getToken()}`,
+      } : {},
     };
   });
 
@@ -28,9 +28,9 @@ export function createApollo(httpLink: HttpLink, authService: AuthService) {
     options: {
       reconnect: true,
       connectionParams: () => {
-        return {
-          authorization,
-        };
+        return authService.getToken() ? {
+          authorization: `Bearer ${authService.getToken()}`,
+        } : {};
       },
     },
   });

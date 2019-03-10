@@ -43,6 +43,16 @@ export class AuthService {
       return this.authError();
     }
 
+    this.setToken(token);
+  }
+
+  setToken(token: string | null) {
+    if (token) {
+      this.cookieService.set('authorization', token, 0, '/');
+    } else {
+      this.cookieService.delete('authorization');
+    }
+
     this.token = token;
     this.token$.next(this.token);
   }
@@ -58,6 +68,7 @@ export class AuthService {
   authError() {
     this.token = null;
     this.token$.next(this.token);
-    this.layoutService.navigate('/error');
+    const url = this.layoutService.isApp ? ['error'] : ['signin'];
+    this.layoutService.navigate(url);
   }
 }

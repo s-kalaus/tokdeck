@@ -7,15 +7,23 @@ const permissionsDef = shield({
   Query: {
     me: pg.c,
     token: pg.c,
+    auction: pg.c,
+    auctions: pg.c,
   },
-  TokenResponse: pg.c,
   Customer: pg.c,
   Message: pg.c,
   Subscription: pg.c,
+  Auction: pg.c,
   Mutation: {
     customerLogin: allow,
     customerAdd: allow,
+    auctionAdd: pg.c,
+    auctionUpdate: pg.c,
+    auctionRemove: pg.c,
   },
+  AuctionPayload: pg.c,
+  TokenPayload: pg.c,
+  Result: allow,
 }, {
   fallbackRule: deny,
 });

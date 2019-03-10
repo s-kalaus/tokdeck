@@ -17,6 +17,7 @@
     "minimist": "^1.2.0",
     "winston": "^3.2.1",
     "convict": "^4.4.1",
+    "cors": "*",
     "lodash": "^4.17.11",
     "express": "^4.16.4",
     "graphql": "^14.1.1",

@@ -1,0 +1,12 @@
+<ul class="nav nav-tabs">
+  <li
+    class="nav-item mr-1"
+    *ngFor="let nav of navs"
+  >
+    <a
+      class="nav-link"
+      [routerLink]="nav.url"
+      routerLinkActive="active"
+    >{{ nav.title | translate }}</a>
+  </li>
+</ul>

@@ -1,7 +1,22 @@
 const yup = require('yup');
 const { validator } = require('../../lib/graphql');
 
+const auction = () => yup.object().shape({
+  title: yup
+    .string()
+    .max(50),
+  path: yup
+    .string()
+    .max(30),
+});
+
 const validatorsDef = validator({
+  Query: {
+    auction: yup.object().shape({
+      auctionId: yup
+        .number(),
+    }),
+  },
   Mutation: {
     customerLogin: yup.object().shape({
       login: yup
@@ -10,7 +25,6 @@ const validatorsDef = validator({
         .max(200),
       password: yup
         .string()
-        .min(8)
         .max(30),
     }),
     customerAdd: yup.object().shape({
@@ -31,6 +45,8 @@ const validatorsDef = validator({
         .min(1)
         .max(30),
     }),
+    auctionAdd: auction(),
+    auctionUpdate: auction(),
   },
 });
 

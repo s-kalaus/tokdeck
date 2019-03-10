@@ -6,6 +6,21 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true,
     },
+    isDeleted: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    title: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      defaultValue: false,
+    },
+    path: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      defaultValue: false,
+    },
   });
 
   Auctions.associate = (models) => {
