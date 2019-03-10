@@ -14,13 +14,13 @@ describe('Resolvers', () => {
   describe('Query', () => {
     describe('me', () => {
       it('call customerDS.getOne', async () => {
-        await resolvers.Query.me(null, undefined, mockContext);
+        await resolvers.Query.me({}, {}, mockContext);
         expect(getOne).toBeCalledWith({ customerId: undefined });
       });
 
-      it('uses user id from context to lookup trips', async () => {
+      it('return proper data', async () => {
         getOne.mockReturnValueOnce({ foo: 'fighters' });
-        const res = await resolvers.Query.me(null, {}, mockContext);
+        const res = await resolvers.Query.me({}, {}, mockContext);
         expect(res).toEqual({ foo: 'fighters' });
       });
     });
@@ -31,7 +31,7 @@ describe('Resolvers', () => {
         expect(createToken).toBeCalledWith({ customerId: undefined });
       });
 
-      it('uses user id from context to lookup trips', async () => {
+      it('return proper data', async () => {
         createToken.mockReturnValueOnce({ foo: 'fighters' });
         const res = await resolvers.Query.token(null, {}, mockContext);
         expect(res).toEqual({ foo: 'fighters' });
@@ -84,13 +84,13 @@ describe('Resolvers', () => {
       const params = { customerId: 1 };
 
       it('call customerDS.getOne', async () => {
-        await resolvers.TokenPayload.customer(null, params, mockContext);
+        await resolvers.TokenPayload.customer({}, params, mockContext);
         expect(getOne).toBeCalledWith(params);
       });
 
       it('uses user id from context to lookup trips', async () => {
         getOne.mockReturnValueOnce({ foo: 'fighters' });
-        const res = await resolvers.TokenPayload.customer(null, params, mockContext);
+        const res = await resolvers.TokenPayload.customer({}, params, mockContext);
         expect(res).toEqual({ foo: 'fighters' });
       });
     });
@@ -104,13 +104,13 @@ describe('Resolvers', () => {
       });
 
       it('call authDS.createToken (no customerId)', async () => {
-        await resolvers.TokenPayload.token(null, undefined, mockContext);
+        await resolvers.TokenPayload.token({}, {}, mockContext);
         expect(createToken).toBeCalledWith({ customerId: undefined });
       });
 
       it('return proper data', async () => {
         createToken.mockReturnValueOnce({ foo: 'fighters' });
-        const res = await resolvers.TokenPayload.token(null, params, mockContext);
+        const res = await resolvers.TokenPayload.token({}, params, mockContext);
         expect(res).toEqual({ foo: 'fighters' });
       });
     });
