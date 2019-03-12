@@ -14,7 +14,7 @@ cd ..
 #copy release
 mkdir ~/.ssh
 chmod 700 ~/.ssh
-ssh-keyscan -t rsa kalaus.ru:2222 > ~/.ssh/known_hosts
+echo -e "Host kalaus.ru\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 cp ./ssh/id_rsa ~/.ssh/id_rsa
 chmod 600 ~/.ssh/id_rsa
 mkdir .release
