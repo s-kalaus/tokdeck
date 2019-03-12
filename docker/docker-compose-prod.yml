@@ -32,6 +32,7 @@ services:
      - ./tokdeck-nginx/conf/init-prod.sh:/root/host/init.sh
      - ./tokdeck-nginx/conf/nginx-prod.conf:/etc/nginx/nginx.conf
      - ../ssl:/etc/nginx/ssl
+     - ..:/var/www/tokdeck
     ports:
      - "7676:80"
     networks:
