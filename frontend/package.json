@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "start": "ng serve --host=0.0.0.0 --public-host=tokdeck.kalaus.ru --base-href / --deploy-url / --progress=false",
-    "build": "ng build --no-progress --prod --base-href / --deploy-url / --progress=false",
+    "prod": "ng build --no-progress --prod --output-path ../public --base-href / --deploy-url / --progress=false",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
