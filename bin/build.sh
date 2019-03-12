@@ -31,7 +31,7 @@ git clean -fxd
 cd ..
 cp -R bin config docker express graphql lib model node_modules service ssl view Makefile package.json public .release
 cd .release
-git add . > /dev/null
+git add .
 git commit -am ${VERSION}
 git tag ${VERSION}
 git push origin ${BUILD_ENV}
