@@ -110,17 +110,19 @@ class AuctionService {
 
     const { auctionId } = auction;
 
-    try {
-      await this.app.service.ShopService.syncPages({
-        customerId,
-        customerShopAccountId,
-      });
-    } catch (e) {
-      await this.app.sequelize.models.Auctions.destroy({
-        where: {
-          auctionId,
-        },
-      });
+    if (customerShopAccountId) {
+      try {
+        await this.app.service.ShopService.syncPages({
+          customerId,
+          customerShopAccountId,
+        });
+      } catch (e) {
+        await this.app.sequelize.models.Auctions.destroy({
+          where: {
+            auctionId,
+          },
+        });
+      }
     }
 
     this.app.logger.info('AuctionService (add): %s', auctionId);

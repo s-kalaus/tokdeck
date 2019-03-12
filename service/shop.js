@@ -167,8 +167,8 @@ class ShopService {
   }
 
   async initShopify({ customerShopAccountId }) {
-    const [customerShopAccount] = await this.app.sequelize.models.CustomerShopAccounts
-      .findOrCreate({
+    const customerShopAccount = await this.app.sequelize.models.CustomerShopAccounts
+      .findOne({
         attributes: ['shop', 'token'],
         where: {
           customerShopAccountId,
