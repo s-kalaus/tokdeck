@@ -14,7 +14,13 @@ cd ..
 #copy release
 mkdir ~/.ssh
 chmod 700 ~/.ssh
-echo -e "Host kalaus\n\tHostname kalaus.ru\n\tPort 2222\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+if ! grep -Fxq "kalaus.ru" my_list.txt
+then
+echo "Host kalaus" >> ~/.ssh/config
+echo " Hostname kalaus.ru" >> ~/.ssh/config
+echo " Port 2222" >> ~/.ssh/config
+echo " HostKeyChecking no" >> ~/.ssh/config
+fi
 cp ./ssh/id_rsa ~/.ssh/id_rsa
 chmod 600 ~/.ssh/id_rsa
 mkdir .release
