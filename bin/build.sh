@@ -14,7 +14,7 @@ cd ..
 #copy release
 mkdir ~/.ssh
 chmod 700 ~/.ssh
-echo -e "Host kalaus.ru\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+echo -e "Host kalaus\n\tHostname kalaus.ru\n\tPort 2222\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 cp ./ssh/id_rsa ~/.ssh/id_rsa
 chmod 600 ~/.ssh/id_rsa
 mkdir .release
