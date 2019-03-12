@@ -186,7 +186,8 @@ class ShopService {
     });
   }
 
-  async syncPages({ customerId, customerShopAccountId }) {
+  async syncPages({ customerShopAccountId }) {
+    await this.initShopify({ customerShopAccountId });
     // const shopify = await this.initShopify({ customerShopAccountId });
     // const shopifyGet = promisify(shopify.get.bind(shopify));
     //
