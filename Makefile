@@ -51,3 +51,15 @@ prod:
 
 down-prod:
 	@cd docker && docker-compose -f docker-compose-prod.yml down
+
+ssh-prod:
+	@cd docker && docker-compose -f docker-compose-prod.yml exec tokdeck-runner-prod bash
+
+ssh-prod-mysql:
+	@cd docker && docker-compose -f docker-compose-prod.yml exec -u root tokdeck-mysql-prod bash
+
+ssh-prod-rabbitmq:
+	@cd docker && docker-compose -f docker-compose-prod.yml exec tokdeck-rabbitmq-prod bash
+
+ssh-prod-nginx:
+	@cd docker && docker-compose -f docker-compose-prod.yml exec tokdeck-nginx-prod bash

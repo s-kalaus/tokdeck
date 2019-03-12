@@ -11,8 +11,7 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
     volumes:
      - ./tokdeck-mysql/conf/conf.d-prod:/etc/mysql/conf.d
-     - ./tokdeck-mysql/conf/mysql.conf.d-prod:/etc/mysql/mysql.conf.d
-     - /var/tockdeck-mysql:/var/lib/mysql
+     - /var/tokdeck-mysql:/var/lib/mysql
     networks:
       tokdeck-prod:
 
@@ -22,7 +21,7 @@ services:
     networks:
       tokdeck-prod:
     volumes:
-      - /var/tockdeck-rabbitmq:/var/lib/rabbitmq
+      - /var/tokdeck-rabbitmq:/var/lib/rabbitmq
 
   tokdeck-nginx-prod:
     build: tokdeck-nginx
