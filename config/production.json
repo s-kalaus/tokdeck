@@ -1,0 +1,28 @@
+{
+  "db": {
+    "dialect": "mysql",
+    "host": "localhost",
+    "port": 3306,
+    "loggingToConsole": false,
+    "sync": false
+  },
+  "rabbitmq": {
+    "host": "localhost",
+    "port": 5672
+  },
+  "express": {
+    "port": 4300,
+    "viewCache": false
+  },
+  "graphql": {
+    "port": 4000
+  },
+  "url": "https://tokdeck.kalaus.ru",
+  "token": {
+    "ttl": 2592000
+  },
+  "shopify": {
+    "scope": ["read_products", "read_content", "write_content"],
+    "name": "test-app-1055"
+  }
+}
