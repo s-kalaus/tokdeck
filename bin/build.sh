@@ -14,7 +14,7 @@ cd ..
 #copy release
 mkdir ~/.ssh
 chmod 700 ~/.ssh
-if ! grep -Fxq "kalaus.ru" my_list.txt
+if ! grep -Fxq "kalaus.ru" ~/.ssh/config
 then
 echo "Host kalaus" >> ~/.ssh/config
 echo " Hostname kalaus.ru" >> ~/.ssh/config
