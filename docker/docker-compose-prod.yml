@@ -1,42 +1,42 @@
 version: '3'
 
 networks:
-  tokdeck-production:
+  tokdeck-prod:
 
 services:
-  tokdeck-mysql-production:
+  tokdeck-mysql-prod:
     build: tokdeck-mysql
     tty: true
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
     volumes:
-     - ./tokdeck-mysql/conf/conf.d-production:/etc/mysql/conf.d
-     - ./tokdeck-mysql/conf/mysql.conf.d-production:/etc/mysql/mysql.conf.d
+     - ./tokdeck-mysql/conf/conf.d-prod:/etc/mysql/conf.d
+     - ./tokdeck-mysql/conf/mysql.conf.d-prod:/etc/mysql/mysql.conf.d
      - /var/tockdeck-mysql:/var/lib/mysql
     networks:
-      tokdeck-production:
+      tokdeck-prod:
 
-  tokdeck-rabbitmq-production:
+  tokdeck-rabbitmq-prod:
     build: tokdeck-rabbitmq
     tty: true
     networks:
-      tokdeck-production:
+      tokdeck-prod:
     volumes:
       - /var/tockdeck-rabbitmq:/var/lib/rabbitmq
 
-  tokdeck-nginx-production:
+  tokdeck-nginx-prod:
     build: tokdeck-nginx
     tty: true
     depends_on:
-     - tokdeck-runner-production
+     - tokdeck-runner-prod
     volumes:
-     - ./tokdeck-nginx/conf/init-production.sh:/root/host/init.sh
-     - ./tokdeck-nginx/conf/nginx-production.conf:/etc/nginx/nginx.conf
+     - ./tokdeck-nginx/conf/init-prod.sh:/root/host/init.sh
+     - ./tokdeck-nginx/conf/nginx-prod.conf:/etc/nginx/nginx.conf
      - ../ssl:/etc/nginx/ssl
     ports:
      - "7676:80"
     networks:
-      tokdeck-production:
+      tokdeck-prod:
         aliases:
           - tokdeck.kalaus.ru
           - a.cdn.tokdeck.kalaus.ru
@@ -44,16 +44,16 @@ services:
           - c.cdn.tokdeck.kalaus.ru
           - d.cdn.tokdeck.kalaus.ru
 
-  tokdeck-runner-production:
+  tokdeck-runner-prod:
     build: tokdeck-runner
     tty: true
     depends_on:
-     - tokdeck-mysql-production
-     - tokdeck-rabbitmq-production
+     - tokdeck-mysql-prod
+     - tokdeck-rabbitmq-prod
     env_file:
-     - ./tokdeck-runner/conf/production.env
+     - ./tokdeck-runner/conf/prod.env
     volumes:
-     - ./tokdeck-runner/conf/init-production.sh:/root/host/init.sh
+     - ./tokdeck-runner/conf/init-prod.sh:/root/host/init.sh
      - ..:/var/www/tokdeck
     networks:
-      tokdeck-production:
+      tokdeck-prod:

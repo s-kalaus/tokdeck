@@ -38,3 +38,16 @@ test:
 
 build-prod:
 	@sh ./bin/build.sh prod ${CI_JOB_ID}
+
+rebuild-prod:
+	@cd docker && docker-compose -f docker-compose-prod.yml build --no-cache
+
+rebuild-production-soft:
+	@cd designdocs/docker && docker-compose -f docker-compose-prod.yml build
+
+prod:
+	@cd docker/tokdeck-node && docker build -t tokdeck-node .
+	@cd docker && docker-compose -f docker-compose-prod.yml up -d --build
+
+down-prod:
+	@cd docker && docker-compose -f docker-compose-prod.yml down
