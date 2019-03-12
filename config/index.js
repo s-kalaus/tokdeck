@@ -97,6 +97,10 @@ const config = convict({
       format: Array,
       default: [],
     },
+    name: {
+      format: String,
+      default: '',
+    },
   },
 });
 

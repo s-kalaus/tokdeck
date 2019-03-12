@@ -27,6 +27,9 @@ module.exports = (sequelize, DataTypes) => {
     Auctions.belongsTo(models.Customers, {
       foreignKey: 'customerId',
     });
+    Auctions.belongsTo(models.CustomerShopAccounts, {
+      foreignKey: 'customerShopAccountId',
+    });
   };
 
   return Auctions;

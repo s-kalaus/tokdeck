@@ -20,3 +20,12 @@ ssh-rabbitmq:
 
 ssh-nginx:
 	@cd docker && docker-compose exec tokdeck-nginx-development bash
+
+up-ci:
+	@cd docker && docker-compose -f docker-compose-ci.yml up -d --build
+
+down-ci:
+	@cd docker && docker-compose -f docker-compose-ci.yml down
+
+ssh-ci-gitlab:
+	@cd docker && docker-compose -f docker-compose-ci.yml exec tokdeck-gitlab-ci bash

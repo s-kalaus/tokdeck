@@ -13,6 +13,13 @@ class AuthService {
       return { success: false, message: 'Incorrect Token' };
     }
 
+    const keysKnown = ['customerId', 'exp', 'iat'];
+    const ext = Object.keys(result)
+      .reduce(
+        (value, key) => ({ ...value, ...keysKnown.includes(key) ? {} : { [key]: result[key] } }),
+        {},
+      );
+
     this.app.logger.info('AuthService (authorize): %s', result.customerId);
 
     return {
@@ -20,11 +27,12 @@ class AuthService {
       data: {
         roleName: 'customer',
         customerId: result.customerId,
+        ext,
       },
     };
   }
 
-  createToken({ customerId }) {
+  createToken({ customerId, ext = {} }) {
     if (!customerId) {
       return { success: false, message: 'Customer ID Not Set' };
     }
@@ -32,6 +40,7 @@ class AuthService {
     const token = sign({
       customerId: `${customerId}`,
       exp: Math.floor(Date.now() / 1000) + this.app.config.get('token.ttl'),
+      ...ext,
     }, this.app.config.get('token.secret'));
 
     this.app.logger.info('AuthService (createToken): %s', customerId);

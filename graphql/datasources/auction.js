@@ -9,8 +9,8 @@ class AuctionDS {
     this.context = config.context;
   }
 
-  async getAll({ customerId = this.context.customerId } = {}) {
-    const resultAuction = await this.app.service.AuctionService.getAll({ customerId });
+  async getAll({ customerId = this.context.customerId, ext = this.context.ext } = {}) {
+    const resultAuction = await this.app.service.AuctionService.getAll({ customerId, ext });
 
     if (!resultAuction.success) {
       throw new ApolloError(resultAuction.message, 500, resultAuction);
@@ -19,8 +19,9 @@ class AuctionDS {
     return resultAuction.data;
   }
 
-  async getOne({ customerId = this.context.customerId, auctionId }) {
-    const resultAuction = await this.app.service.AuctionService.getOne({ customerId, auctionId });
+  async getOne({ customerId = this.context.customerId, auctionId, ext = this.context.ext }) {
+    const resultAuction = await this.app.service.AuctionService
+      .getOne({ customerId, auctionId, ext });
 
     if (!resultAuction.success) {
       throw new ApolloError(resultAuction.message, 500, resultAuction);
@@ -39,11 +40,13 @@ class AuctionDS {
     title,
     path,
     customerId = this.context.customerId,
+    ext = this.context.ext,
   }) {
     const resultAdd = await this.app.service.AuctionService.add({
       title,
       path,
       customerId,
+      ext,
     });
 
     if (!resultAdd.success) {
@@ -60,12 +63,14 @@ class AuctionDS {
     title,
     path,
     customerId = this.context.customerId,
+    ext = this.context.ext,
   }) {
     const resultUpdate = await this.app.service.AuctionService.update({
       auctionId,
       title,
       path,
       customerId,
+      ext,
     });
 
     if (!resultUpdate.success) {
@@ -80,10 +85,12 @@ class AuctionDS {
   async remove({
     auctionId,
     customerId = this.context.customerId,
+    ext = this.context.ext,
   }) {
     const resultRemove = await this.app.service.AuctionService.remove({
       auctionId,
       customerId,
+      ext,
     });
 
     if (!resultRemove.success) {

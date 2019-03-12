@@ -1,7 +1,6 @@
 const { promisify } = require('util');
 const ShopifyAPI = require('shopify-node-api');
 
-
 class ShopService {
   constructor(app) {
     this.app = app;
@@ -10,6 +9,7 @@ class ShopService {
   async authorize({
     code,
     hmac,
+    locale,
     shop,
     state,
     timestamp,
@@ -26,27 +26,6 @@ class ShopService {
     const exchangeTemporaryToken = promisify(shopify.exchange_temporary_token.bind(shopify));
     const shopifyGet = promisify(shopify.get.bind(shopify));
 
-    if (!code) {
-      return {
-        success: true,
-        data: {
-          redirect: shopify.buildAuthURL(),
-        },
-      };
-    }
-
-    const valid = shopify.is_valid_signature({
-      code,
-      hmac,
-      shop,
-      state,
-      timestamp,
-    });
-
-    if (!valid) {
-      return { success: false, message: 'Signature Invalid' };
-    }
-
     const shopAccount = await this.app.sequelize.models.ShopAccounts.findOne({
       attributes: ['shopAccountId'],
       where: {
@@ -58,9 +37,29 @@ class ShopService {
       return { success: false, message: 'Shop Account Not Found' };
     }
 
-    const [customerShopAccount] = await this.app.sequelize.models.CustomerShopAccounts
+    const paramsData = {
+      code,
+      hmac,
+      locale,
+      shop,
+      state,
+      timestamp,
+    };
+    const params = Object.keys(paramsData)
+      .reduce(
+        (value, key) => ({ ...value, ...paramsData[key] ? { [key]: paramsData[key] } : {} }),
+        {},
+      );
+
+    const valid = shopify.is_valid_signature(params, !state);
+
+    if (!valid) {
+      return { success: false, message: 'Signature Invalid' };
+    }
+
+    let [customerShopAccount] = await this.app.sequelize.models.CustomerShopAccounts
       .findOrCreate({
-        attributes: ['token'],
+        attributes: ['token', 'customerShopAccountId'],
         where: {
           shopAccountId: shopAccount.shopAccountId,
           shop,
@@ -72,13 +71,29 @@ class ShopService {
     }
 
     let shopResult = null;
+    let { token } = customerShopAccount;
 
-    if (customerShopAccount.token) {
+    if (token) {
       shopify.set_access_token(customerShopAccount.token);
-      shopResult = await shopifyGet('/admin/shop.json', {});
+      try {
+        shopResult = await shopifyGet('/admin/shop.json', {});
+      } catch (e) {
+        shopResult = null;
+      }
     }
 
     if (!shopResult || !shopResult.shop) {
+      if (!code) {
+        return {
+          success: true,
+          data: {
+            redirect: shopify.buildAuthURL(),
+          },
+        };
+      }
+
+      token = null;
+
       const resultToken = await exchangeTemporaryToken({
         code,
         hmac,
@@ -91,11 +106,17 @@ class ShopService {
         return { success: false, message: 'Shop Token Get Error' };
       }
 
-      shopResult = await shopifyGet('/admin/shop.json', {});
+      try {
+        shopResult = await shopifyGet('/admin/shop.json', {});
+      } catch (e) {
+        shopResult = null;
+      }
 
       if (!shopResult || !shopResult.shop) {
         return { success: false, message: 'Shop Get Error' };
       }
+
+      token = resultToken.access_token;
     }
 
     const { email } = shopResult.shop;
@@ -119,14 +140,75 @@ class ShopService {
 
     const { customerId } = resultCustomer.data;
 
+    if (token !== customerShopAccount.token) {
+      customerShopAccount = await customerShopAccount.update({
+        token,
+      }, {
+        fields: ['token'],
+      });
+
+      return {
+        success: true,
+        data: {
+          redirect: `https://${shop}/admin/apps/${this.app.config.get('shopify.name')}`,
+        },
+      };
+    }
+
     this.app.logger.info('ShopService (authorize): %s', shop);
 
     return {
       success: true,
       data: {
         customerId,
+        customerShopAccountId: customerShopAccount.customerShopAccountId,
       },
     };
+  }
+
+  async initShopify({ customerShopAccountId }) {
+    const [customerShopAccount] = await this.app.sequelize.models.CustomerShopAccounts
+      .findOrCreate({
+        attributes: ['shop', 'token'],
+        where: {
+          customerShopAccountId,
+        },
+      });
+
+    if (!customerShopAccount) {
+      return { success: false, message: 'Customer Shop Account Not Found' };
+    }
+
+    return new ShopifyAPI({
+      verbose: false,
+      shop: customerShopAccount.shop,
+      access_token: customerShopAccount.token,
+    });
+  }
+
+  async syncPages({ customerId, customerShopAccountId }) {
+    // const shopify = await this.initShopify({ customerShopAccountId });
+    // const shopifyGet = promisify(shopify.get.bind(shopify));
+    //
+    // const { pages = [] } = await shopifyGet('/admin/pages.json', { handle });
+    //
+    // if (pages.length) {
+    //   return {
+    //     success: false,
+    //     message: 'Auction with the same URL already exists',
+    //     form: {
+    //       path: 'same',
+    //     },
+    //   };
+    // }
+    //
+    // console.log(pages);
+    // return {
+    //   success: true,
+    //   data: {
+    //     pageId: 1,
+    //   },
+    // };
   }
 }
 

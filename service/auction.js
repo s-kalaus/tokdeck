@@ -5,12 +5,14 @@ class AuctionService {
     this.app = app;
   }
 
-  async getAll({ customerId }) {
+  async getAll({ customerId, ext = {}, includeDeleted = false }) {
+    const { customerShopAccountId = null } = ext;
     const list = await this.app.sequelize.models.Auctions.findAll({
       attributes: ['auctionId', 'title', 'path'],
       where: {
-        isDeleted: false,
+        ...includeDeleted ? {} : { isDeleted: false },
         customerId,
+        ...customerShopAccountId ? { customerShopAccountId } : {},
       },
     });
 
@@ -26,13 +28,15 @@ class AuctionService {
     };
   }
 
-  async getOne({ customerId, auctionId }) {
+  async getOne({ customerId, auctionId, ext = {} }) {
+    const { customerShopAccountId = null } = ext;
     const auction = await this.app.sequelize.models.Auctions.findOne({
       attributes: ['auctionId', 'title', 'path'],
       where: {
         isDeleted: false,
         customerId,
         auctionId,
+        ...customerShopAccountId ? { customerShopAccountId } : {},
       },
     });
 
@@ -52,11 +56,18 @@ class AuctionService {
     };
   }
 
-  async add({ customerId, title, path }) {
+  async add({
+    customerId,
+    title,
+    path,
+    ext = {},
+  }) {
+    const { customerShopAccountId = null } = ext;
     const sameTitle = await this.app.sequelize.models.Auctions.count({
       where: {
         isDeleted: false,
         customerId,
+        ...customerShopAccountId ? { customerShopAccountId } : {},
         title,
       },
     });
@@ -75,6 +86,7 @@ class AuctionService {
       where: {
         isDeleted: false,
         customerId,
+        ...customerShopAccountId ? { customerShopAccountId } : {},
         path,
       },
     });
@@ -93,9 +105,23 @@ class AuctionService {
       customerId,
       title,
       path,
+      ...customerShopAccountId ? { customerShopAccountId } : {},
     });
 
     const { auctionId } = auction;
+
+    try {
+      await this.app.service.ShopService.syncPages({
+        customerId,
+        customerShopAccountId,
+      });
+    } catch (e) {
+      await this.app.sequelize.models.Auctions.destroy({
+        where: {
+          auctionId,
+        },
+      });
+    }
 
     this.app.logger.info('AuctionService (add): %s', auctionId);
 
@@ -112,7 +138,9 @@ class AuctionService {
     auctionId,
     title,
     path,
+    ext = {},
   }) {
+    const { customerShopAccountId = null } = ext;
     if (!auctionId) {
       return {
         success: false,
@@ -129,6 +157,7 @@ class AuctionService {
         where: {
           isDeleted: false,
           customerId,
+          ...customerShopAccountId ? { customerShopAccountId } : {},
           title,
           auctionId: {
             [Op.ne]: auctionId,
@@ -154,6 +183,7 @@ class AuctionService {
         where: {
           isDeleted: false,
           customerId,
+          ...customerShopAccountId ? { customerShopAccountId } : {},
           path,
           auctionId: {
             [Op.ne]: auctionId,
@@ -173,6 +203,8 @@ class AuctionService {
 
       data.path = path;
     }
+
+    await this.getOne({ customerId, auctionId, ext });
 
     await this.app.sequelize.models.Auctions.update(data, {
       fields: Object.keys(data),
@@ -194,6 +226,7 @@ class AuctionService {
   async remove({
     customerId,
     auctionId,
+    ext = {},
   }) {
     if (!auctionId) {
       return {
@@ -202,7 +235,7 @@ class AuctionService {
       };
     }
 
-    await this.getOne({ customerId, auctionId });
+    await this.getOne({ customerId, auctionId, ext });
 
     await this.app.sequelize.models.Auctions.destroy({
       where: {

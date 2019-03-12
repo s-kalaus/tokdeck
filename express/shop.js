@@ -9,6 +9,7 @@ class ShopController extends BaseController {
     const {
       code,
       hmac,
+      locale,
       shop,
       state,
       timestamp,
@@ -17,6 +18,7 @@ class ShopController extends BaseController {
     const resultAuth = await this.app.service.ShopService.authorize({
       code,
       hmac,
+      locale,
       shop,
       state,
       timestamp,
@@ -26,14 +28,17 @@ class ShopController extends BaseController {
       return this.error(res, resultAuth);
     }
 
-    const { redirect, customerId } = resultAuth.data;
+    const { redirect, customerId, customerShopAccountId } = resultAuth.data;
 
     if (redirect) {
-      return res.redirect(redirect);
+      return this.render(res, 'redirect', {
+        redirect,
+      });
     }
 
     const resultToken = await this.app.service.AuthService.createToken({
       customerId,
+      ...customerShopAccountId ? { ext: { customerShopAccountId: `${customerShopAccountId}` } } : {},
     });
 
     if (!resultToken.success) {
