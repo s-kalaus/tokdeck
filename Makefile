@@ -42,8 +42,8 @@ build-prod:
 rebuild-prod:
 	@cd docker && docker-compose -f docker-compose-prod.yml build --no-cache
 
-rebuild-production-soft:
-	@cd designdocs/docker && docker-compose -f docker-compose-prod.yml build
+rebuild-prod-soft:
+	@cd docker && docker-compose -f docker-compose-prod.yml build
 
 prod:
 	@cd docker/tokdeck-node && docker build -t tokdeck-node .
