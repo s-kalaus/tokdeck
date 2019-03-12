@@ -1,7 +1,5 @@
 {
   "db": {
-    "database": "tokdeck_development",
-    "user": "tokdeck_development",
     "dialect": "mysql",
     "host": "localhost",
     "port": 3306,
@@ -21,12 +19,9 @@
   },
   "url": "https://tokdeck.kalaus.ru",
   "token": {
-    "secret": "YsVY4DT%BasUY324",
     "ttl": 2592000
   },
   "shopify": {
-    "key": "724297dc6476e387cac99de9a34d44a3",
-    "secret": "4dc8aeae50e2a3f98fade6b15a191272",
     "scope": ["read_products", "read_content", "write_content"],
     "name": "test-app-1055"
   }

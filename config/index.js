@@ -9,10 +9,13 @@ const config = convict({
   db: {
     database: {
       format: String,
+      env: 'TOKDECK_DB_DATABASE',
       default: 'localhost',
     },
     user: {
       format: String,
+      sensitive: true,
+      env: 'TOKDECK_DB_USER',
       default: 'user',
     },
     password: {
@@ -77,6 +80,7 @@ const config = convict({
   token: {
     secret: {
       format: String,
+      env: 'TOKDECK_TOKEN_SECRET',
       default: '',
     },
     ttl: {
@@ -87,10 +91,12 @@ const config = convict({
   shopify: {
     key: {
       format: String,
+      env: 'TOKDECK_SHOPIFY_KEY',
       default: '',
     },
     secret: {
       format: String,
+      env: 'TOKDECK_SHOPIFY_SECRET',
       default: '',
     },
     scope: {

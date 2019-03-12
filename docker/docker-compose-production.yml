@@ -1,0 +1,59 @@
+version: '3'
+
+networks:
+  tokdeck-production:
+
+services:
+  tokdeck-mysql-production:
+    build: tokdeck-mysql
+    tty: true
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    volumes:
+     - ./tokdeck-mysql/conf/conf.d-production:/etc/mysql/conf.d
+     - ./tokdeck-mysql/conf/mysql.conf.d-production:/etc/mysql/mysql.conf.d
+     - /var/tockdeck-mysql:/var/lib/mysql
+    networks:
+      tokdeck-production:
+
+  tokdeck-rabbitmq-production:
+    build: tokdeck-rabbitmq
+    tty: true
+    networks:
+      tokdeck-production:
+    volumes:
+      - /var/tockdeck-rabbitmq:/var/lib/rabbitmq
+
+  tokdeck-nginx-production:
+    build: tokdeck-nginx
+    tty: true
+    depends_on:
+     - tokdeck-runner-production
+    volumes:
+     - ./tokdeck-nginx/conf/init-production.sh:/root/host/init.sh
+     - ./tokdeck-nginx/conf/nginx-production.conf:/etc/nginx/nginx.conf
+     - ../ssl:/etc/nginx/ssl
+    ports:
+     - "7676:80"
+    networks:
+      tokdeck-production:
+        aliases:
+          - tokdeck.kalaus.ru
+          - a.cdn.tokdeck.kalaus.ru
+          - b.cdn.tokdeck.kalaus.ru
+          - c.cdn.tokdeck.kalaus.ru
+          - d.cdn.tokdeck.kalaus.ru
+
+  tokdeck-runner-production:
+    build: tokdeck-runner
+    tty: true
+    depends_on:
+     - tokdeck-mysql-production
+     - tokdeck-rabbitmq-production
+    env_file:
+     - ./tokdeck-runner/conf/production.env
+    volumes:
+     - ./tokdeck-runner/conf/init-production.sh:/root/host/init.sh
+     - ..:/var/www/tokdeck
+    networks:
+      tokdeck-production:
