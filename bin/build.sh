@@ -1,0 +1,7 @@
+#!/bin/sh
+
+BUILD_ENV=${1:-prod}
+BUILD_ID=${2:-1}
+BUILD_ID_BASE="0"
+VERSION="${BUILD_ENV}-v${BUILD_ID_BASE}.${BUILD_ID}"
+

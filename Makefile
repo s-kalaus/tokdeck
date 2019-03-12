@@ -29,3 +29,12 @@ down-ci:
 
 ssh-ci-gitlab:
 	@cd docker && docker-compose -f docker-compose-ci.yml exec tokdeck-gitlab-ci bash
+
+test:
+	@npm i
+	@npm run jscpd
+	@npm run lint
+	@npm run test
+
+build-prod:
+	@sh ./bin/build.sh prod ${CI_JOB_ID}
