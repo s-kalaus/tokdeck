@@ -31,18 +31,12 @@ services:
     volumes:
      - ./tokdeck-nginx/conf/init-prod.sh:/root/host/init.sh
      - ./tokdeck-nginx/conf/nginx-prod.conf:/etc/nginx/nginx.conf
-     - ../ssl:/etc/nginx/ssl
+     - /etc/ssl/certs/tokdeck:/etc/nginx/ssl
      - ..:/var/www/tokdeck
     ports:
      - "7676:80"
     networks:
       tokdeck-prod:
-        aliases:
-          - tokdeck.kalaus.ru
-          - a.cdn.tokdeck.kalaus.ru
-          - b.cdn.tokdeck.kalaus.ru
-          - c.cdn.tokdeck.kalaus.ru
-          - d.cdn.tokdeck.kalaus.ru
 
   tokdeck-runner-prod:
     build: tokdeck-runner

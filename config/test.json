@@ -3,8 +3,8 @@
     "dialect": "mysql",
     "host": "localhost",
     "port": 3306,
-    "loggingToConsole": false,
-    "sync": false
+    "loggingToConsole": true,
+    "sync": true
   },
   "logger": {
     "console": {

@@ -2,9 +2,17 @@ const convict = require('convict');
 
 const config = convict({
   env: {
-    format: ['production', 'development'],
+    format: ['production', 'development', 'test'],
     default: 'development',
     env: 'NODE_ENV',
+  },
+  logger: {
+    console: {
+      level: {
+        format: ['info', 'error'],
+        default: 'info',
+      },
+    },
   },
   db: {
     database: {
