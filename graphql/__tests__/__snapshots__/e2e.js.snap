@@ -4,8 +4,8 @@ exports[`Graphql - e2e login 1`] = `
 Object {
   "data": Object {
     "customerLogin": Object {
-      "customer": {
-        "customerId": "1"
+      "customer": Object {
+        "customerId": "1",
       },
     },
   },
