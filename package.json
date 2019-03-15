@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "jscpd": "./node_modules/.bin/jscpd",
-    "test": "./node_modules/.bin/jest --coverage",
+    "test": "NODE_ENV=test ./node_modules/.bin/jest --coverage",
     "lint": "./node_modules/.bin/eslint ./service/**/*.js ./lib/**/*.js ./graphql/**/*.js ./bin/**/*.js ./model/**/*.js"
   },
   "dependencies": {
@@ -41,7 +41,8 @@
     "eslint-plugin-import": "^2.16.0",
     "jest": "^23.6.0",
     "jscpd": "^0.6.23",
-    "node-fetch": "^2.2.1"
+    "node-fetch": "^2.2.1",
+    "sqlite": "^3.0.2"
   },
   "jest": {
     "testPathIgnorePatterns": [

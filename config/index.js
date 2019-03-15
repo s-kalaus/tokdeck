@@ -41,6 +41,10 @@ const config = convict({
       env: 'TOKDECK_DB_HOST',
       default: 'localhost',
     },
+    storage: {
+      format: String,
+      default: ':memory',
+    },
     port: {
       format: 'port',
       default: 3306,

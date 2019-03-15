@@ -15,7 +15,7 @@ cd ..
 mkdir ~/.ssh
 chmod 700 ~/.ssh
 ssh-keyscan -p 2222 -t rsa kalaus.ru > ~/.ssh/known_hosts
-cp ./ssh/id_rsa ~/.ssh/id_rsa
+cp ./.ssh/id_rsa ~/.ssh/id_rsa
 chmod 600 ~/.ssh/id_rsa
 mkdir .release
 cd .release
