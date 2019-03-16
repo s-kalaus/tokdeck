@@ -6,14 +6,17 @@ import { CookieService } from 'ngx-cookie-service';
 import { Customer } from '@app/interface';
 import { LayoutService } from '@app/service/layout.service';
 import { BehaviorSubject } from 'rxjs';
+import { dispatch } from '@angular-redux/store';
+import { ActionService } from '@app/service/action.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  @dispatch() tokenSet = token =>
+    this.actionService.tokenSet(token)
 
   private token: string = null;
-  token$ = new BehaviorSubject<string>(null);
   subscriptionClient: any;
 
   constructor(
@@ -21,6 +24,7 @@ export class AuthService {
     private layoutService: LayoutService,
     private router: Router,
     private cookieService: CookieService,
+    private actionService: ActionService,
   ) {
 
     this.init();
@@ -54,7 +58,7 @@ export class AuthService {
     }
 
     this.token = token;
-    this.token$.next(this.token);
+    this.tokenSet(this.token);
   }
 
   getToken() {
@@ -67,7 +71,7 @@ export class AuthService {
 
   authError() {
     this.token = null;
-    this.token$.next(this.token);
+    this.tokenSet(this.token);
     const url = this.layoutService.isApp ? ['error'] : ['signin'];
     this.layoutService.navigate(url);
   }

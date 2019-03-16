@@ -9,7 +9,7 @@ import { auctionFetchAll, auctionFetchOne, auctionRemove, auctionUpdate } from '
 import { auctionAdd } from '@app/mutation/auction-add';
 import { LoadingService } from '@app/service/loading.service';
 import { ActionService } from '@app/service/action.service';
-import { NgRedux, dispatch, select } from '@angular-redux/store';
+import { dispatch, select } from '@angular-redux/store';
 import { IAppState } from '@app/store';
 
 @Injectable({
@@ -30,7 +30,6 @@ export class AuctionService {
     private apollo: Apollo,
     private loadingService: LoadingService,
     private actionService: ActionService,
-    private ngRedux: NgRedux<IAppState>,
   ) {
     this.init();
   }
