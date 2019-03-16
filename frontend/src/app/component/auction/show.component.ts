@@ -4,7 +4,10 @@ import { Auction } from '@app/interface';
 import { ActivatedRoute } from '@angular/router';
 import { AuctionService } from '@app/service/auction.service';
 import { LoadingService } from '@app/service';
-import { map } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
+import { NgRedux } from '@angular-redux/store';
+import { IAppState } from '@app/store';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-auction-show',
@@ -12,12 +15,13 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./show.component.scss'],
 })
 export class AuctionShowComponent extends BaseComponent {
-  auction: Auction;
+  auction$: Observable<Auction>;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private auctionService: AuctionService,
     public loadingService: LoadingService,
+    private ngRedux: NgRedux<IAppState>,
   ) {
     super();
   }
@@ -25,12 +29,12 @@ export class AuctionShowComponent extends BaseComponent {
   init() {
     this.activatedRoute.params
       .pipe(
-        map(params => Number(params.auctionId)),
+        first(),
+        map(params => params.auctionId),
       )
-      .subscribe(auctionId => this.auctionService.fetchOne(auctionId).subscribe());
-
-    this.subscriptions.push(
-      this.auctionService.auction$.subscribe(auction => this.auction = auction),
-    );
+      .subscribe((auctionId) => {
+        this.auctionService.fetchOne(auctionId).subscribe();
+        this.auction$ = this.ngRedux.select(['auctionOne', auctionId]);
+      });
   }
 }

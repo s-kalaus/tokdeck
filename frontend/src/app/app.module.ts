@@ -9,7 +9,9 @@ import { BsDropdownModule } from 'ngx-bootstrap';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { NgReduxModule, NgRedux } from '@angular-redux/store';
 
+import { rootReducer, IAppState, INITIAL_STATE } from './store';
 import { environment } from '@app/../environments/environment';
 import { routes } from '@app/data/routes';
 import { GraphQLModule } from './graphql.module';
@@ -85,6 +87,7 @@ export function tokenGetter() {
     BsDropdownModule.forRoot(),
     FormsModule,
     ReactiveFormsModule,
+    NgReduxModule,
   ],
   providers: [
     CookieService,
@@ -93,4 +96,10 @@ export function tokenGetter() {
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {
+  constructor(ngRedux: NgRedux<IAppState>) {
+    ngRedux.configureStore(
+      rootReducer,
+      INITIAL_STATE);
+  }
+}

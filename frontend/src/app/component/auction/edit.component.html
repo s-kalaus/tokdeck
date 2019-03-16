@@ -1,5 +1,6 @@
 <ng-container *ngIf="!loadingService.isLoading('auction-detail')">
   <app-auction-form
+    *ngIf="auction$ | async as auction"
     successMessage="auction.edit.error.success"
     submitMethod="update"
     [submitParams]="[auction.auctionId]"

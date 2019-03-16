@@ -7,7 +7,7 @@
     >auction.list.add</a>
   </div>
 
-  <ng-container *ngIf="auctions.length">
+  <ng-container *ngIf="(auctions$ | async).length">
     <table class="table table-hover">
       <tr>
         <th class="px-3 bg-white" translate>auction.list.title</th>
@@ -15,7 +15,7 @@
         <th class="px-3 bg-white text-center" translate>auction.list.products</th>
         <th class="px-3 bg-white">&nbsp;</th>
       </tr>
-      <tr *ngFor="let auction of auctions">
+      <tr *ngFor="let auction of (auctions$ | async)">
         <td class="px-3">
           <a [routerLink]="[layoutService.path, 'auction', 'show', auction.auctionId]">{{ auction.title }}</a>
         </td>
@@ -38,7 +38,7 @@
       </tr>
     </table>
   </ng-container>
-  <ng-container *ngIf="!auctions.length">
+  <ng-container *ngIf="!(auctions$ | async).length">
     <div translate>auction.list.empty</div>
   </ng-container>
 </ng-container>

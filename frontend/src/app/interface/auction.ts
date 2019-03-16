@@ -1,3 +1,4 @@
 export class Auction {
-  auctionId: number;
+  auctionId: string;
+  title: string;
 }

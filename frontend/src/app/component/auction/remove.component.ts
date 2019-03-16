@@ -4,8 +4,10 @@ import { Auction } from '@app/interface';
 import { ActivatedRoute } from '@angular/router';
 import { AuctionService } from '@app/service/auction.service';
 import { AlertService, LayoutService, LoadingService } from '@app/service';
-import { catchError, map } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { catchError, first, map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { NgRedux } from '@angular-redux/store';
+import { IAppState } from '@app/store';
 
 @Component({
   selector: 'app-auction-remove',
@@ -13,7 +15,7 @@ import { of } from 'rxjs';
   styleUrls: ['./remove.component.scss'],
 })
 export class AuctionRemoveComponent extends BaseComponent {
-  auction: Auction;
+  auction$: Observable<Auction>;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -21,6 +23,7 @@ export class AuctionRemoveComponent extends BaseComponent {
     public loadingService: LoadingService,
     public layoutService: LayoutService,
     public alertService: AlertService,
+    private ngRedux: NgRedux<IAppState>,
   ) {
     super();
   }
@@ -28,7 +31,8 @@ export class AuctionRemoveComponent extends BaseComponent {
   init() {
     this.activatedRoute.params
       .pipe(
-        map(params => Number(params.auctionId)),
+        first(),
+        map(params => params.auctionId),
       )
       .subscribe((auctionId) => {
         this.auctionService.fetchOne(auctionId).pipe(
@@ -38,21 +42,17 @@ export class AuctionRemoveComponent extends BaseComponent {
             return of();
           }),
         ).subscribe();
+        this.auction$ = this.ngRedux.select(['auctionOne', auctionId]);
       });
-
-    this.subscriptions.push(
-      this.auctionService.auction$.subscribe(auction => this.auction = auction),
-    );
   }
 
-  remove() {
-    this.auctionService.remove(this.auction.auctionId).pipe(
+  remove(auction: Auction) {
+    this.auctionService.remove(auction.auctionId).pipe(
       catchError(err => this.layoutService.processApiError(err)),
     ).subscribe(() => this.onSuccess());
   }
 
   onSuccess() {
-    console.log(111);
     this.alertService.show({ text: 'auction.remove.error.success', type: 'success' });
     this.layoutService.navigate(['auction']);
   }
