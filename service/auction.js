@@ -6,9 +6,9 @@ class AuctionService {
   }
 
   async getAll({ customerId, ext = {}, includeDeleted = false }) {
-    const { customerShopAccountId = null } = ext;
+    const { customerShopAccountId = null, fields = [] } = ext;
     const list = await this.app.sequelize.models.Auctions.findAll({
-      attributes: ['auctionId', 'title', 'path'],
+      attributes: ['auctionId', 'title', 'path', ...fields],
       where: {
         ...includeDeleted ? {} : { isDeleted: false },
         customerId,
@@ -20,11 +20,14 @@ class AuctionService {
 
     return {
       success: true,
-      data: list.map(item => ({
-        auctionId: item.auctionId,
-        title: item.title,
-        path: item.path,
-      })),
+      data: list.map(
+        item => ['auctionId', 'title', 'path']
+          .concat(fields)
+          .reduce(
+            (value, field) => ({ ...value, [field]: item[field] }),
+            {},
+          ),
+      ),
     };
   }
 
@@ -122,6 +125,10 @@ class AuctionService {
             auctionId,
           },
         });
+        return {
+          success: false,
+          message: 'Auction sync error',
+        };
       }
     }
 
@@ -140,6 +147,7 @@ class AuctionService {
     auctionId,
     title,
     path,
+    pageId,
     ext = {},
   }) {
     const { customerShopAccountId = null } = ext;
@@ -206,6 +214,10 @@ class AuctionService {
       data.path = path;
     }
 
+    if (pageId) {
+      data.pageId = pageId;
+    }
+
     await this.getOne({ customerId, auctionId, ext });
 
     await this.app.sequelize.models.Auctions.update(data, {
@@ -213,6 +225,11 @@ class AuctionService {
       where: {
         auctionId,
       },
+    });
+
+    await this.app.service.ShopService.syncPages({
+      customerId,
+      customerShopAccountId,
     });
 
     this.app.logger.info('AuctionService (update): %s', auctionId);
@@ -230,6 +247,8 @@ class AuctionService {
     auctionId,
     ext = {},
   }) {
+    const { customerShopAccountId = null } = ext;
+
     if (!auctionId) {
       return {
         success: false,
@@ -242,7 +261,13 @@ class AuctionService {
     await this.app.sequelize.models.Auctions.destroy({
       where: {
         auctionId,
+        ...customerShopAccountId ? { customerShopAccountId } : {},
       },
+    });
+
+    await this.app.service.ShopService.syncPages({
+      customerId,
+      customerShopAccountId,
     });
 
     this.app.logger.info('AuctionService (remove): %s', auctionId);

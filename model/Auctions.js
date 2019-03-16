@@ -13,13 +13,15 @@ module.exports = (sequelize, DataTypes) => {
     },
     title: {
       type: DataTypes.STRING(50),
-      allowNull: false,
-      defaultValue: false,
+      defaultValue: null,
     },
     path: {
       type: DataTypes.STRING(50),
-      allowNull: false,
-      defaultValue: false,
+      defaultValue: null,
+    },
+    pageId: {
+      type: DataTypes.STRING(50),
+      defaultValue: null,
     },
   });
 

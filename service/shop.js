@@ -186,30 +186,111 @@ class ShopService {
     });
   }
 
-  async syncPages({ customerShopAccountId }) {
-    await this.initShopify({ customerShopAccountId });
-    // const shopify = await this.initShopify({ customerShopAccountId });
-    // const shopifyGet = promisify(shopify.get.bind(shopify));
-    //
-    // const { pages = [] } = await shopifyGet('/admin/pages.json', { handle });
-    //
-    // if (pages.length) {
-    //   return {
-    //     success: false,
-    //     message: 'Auction with the same URL already exists',
-    //     form: {
-    //       path: 'same',
-    //     },
-    //   };
-    // }
-    //
-    // console.log(pages);
-    // return {
-    //   success: true,
-    //   data: {
-    //     pageId: 1,
-    //   },
-    // };
+  async syncPages({ customerId, customerShopAccountId }) {
+    const shopify = await this.initShopify({ customerShopAccountId });
+    const shopifyGet = promisify(shopify.get.bind(shopify));
+    const shopifyPost = promisify(shopify.post.bind(shopify));
+    const shopifyPut = promisify(shopify.put.bind(shopify));
+    const shopifyDelete = promisify(shopify.delete.bind(shopify));
+    const limit = 1;
+    let sinceId = 0;
+    let pages = [];
+    let pagesToCreate = [];
+    let pagesToUpdate = [];
+    let pagesToRemove = [];
+    const auctionsToUpdate = [];
+
+    do {
+      const { pages: currentPages = [] } = await shopifyGet('/admin/pages.json', {
+        limit,
+        fields: 'id,handle,body_html',
+        since_id: sinceId,
+      });
+      pages = pages
+        .concat(
+          currentPages
+            .map(
+              page => ({
+                ...page,
+                author: page.body_html.indexOf('<!-- TOKDECK: start -->') !== -1 && 'tokdeck',
+              }),
+            ),
+        );
+      sinceId = currentPages.length === limit ? currentPages[currentPages.length - 1].id : 0;
+    } while (sinceId);
+
+    const { data: auctions = [] } = await this.app.service.AuctionService.getAll({
+      customerId,
+      ext: { customerShopAccountId, fields: ['pageId'] },
+    });
+
+    pagesToCreate = auctions
+      .filter(
+        ({ pageId }) => !pages.find(({ id, author }) => `${id}` === pageId && author === 'tokdeck'),
+      ).map(({ auctionId, path, title }) => ({
+        auctionId,
+        page: {
+          author: 'tokdeck',
+          handle: path,
+          body_html: `<!-- TOKDECK: start -->Hello ${auctionId}<!-- TOKDECK: end -->`,
+          title,
+        },
+      }));
+
+    pagesToUpdate = auctions
+      .filter(
+        ({ pageId, title, path }) => {
+          const page = pages.find(({ id, author }) => `${id}` === pageId && author === 'tokdeck');
+          return page && (page.title !== title || page.handle !== path);
+        },
+      ).map(({
+        pageId,
+        path,
+        title,
+      }) => ({
+        pageId,
+        page: {
+          handle: path,
+          title,
+        },
+      }));
+
+    pagesToRemove = pages
+      .filter(
+        ({ id, author }) => author === 'tokdeck' && !auctions.find(({ pageId }) => `${id}` === pageId),
+      ).map(({ id }) => ({ pageId: id }));
+
+    if (pagesToCreate.length) {
+      for (const { page, auctionId } of pagesToCreate) {
+        const { page: { id: pageId } } = await shopifyPost('/admin/pages.json', { page });
+        auctionsToUpdate.push({
+          auctionId,
+          pageId,
+        });
+      }
+    }
+
+    if (pagesToUpdate.length) {
+      for (const { page, pageId } of pagesToUpdate) {
+        await shopifyPut(`/admin/pages/${pageId}.json`, { page });
+      }
+    }
+
+    if (pagesToRemove.length) {
+      for (const { pageId } of pagesToRemove) {
+        await shopifyDelete(`/admin/pages/${pageId}.json`);
+      }
+    }
+
+    if (auctionsToUpdate) {
+      for (const { auctionId, ...data } of auctionsToUpdate) {
+        await this.app.service.AuctionService.update({
+          customerId,
+          auctionId,
+          ...data,
+        });
+      }
+    }
   }
 }
 
