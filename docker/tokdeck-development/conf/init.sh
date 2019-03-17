@@ -4,8 +4,8 @@ npm i
 
 cd frontend
 npm i
-pm2 start npm -n tokdeck-development-frontend -- start
 cd ..
+pm2 start --only frontend
 
 sleep 8
 
@@ -16,7 +16,7 @@ mysql -htokdeck-mysql-development -uroot -e "GRANT ALL PRIVILEGES ON tokdeck_dev
 node ./bin/db-create
 node ./bin/db-fixture common development
 
-pm2 start ./bin/graphql.js -n tokdeck-development-graphql
-pm2 start ./bin/express.js -n tokdeck-development-express
+pm2 start --only express
+pm2 start --only graphql
 
 tail -f /dev/null

@@ -53,5 +53,6 @@ services:
     volumes:
      - ./tokdeck-development/conf/init.sh:/root/host/init.sh
      - ..:/var/www/tokdeck
+     - ./tokdeck-development/conf/ecosystem.config.js:/var/www/tokdeck/ecosystem.config.js
     networks:
       tokdeck:
