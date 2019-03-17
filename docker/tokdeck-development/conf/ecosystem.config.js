@@ -6,17 +6,18 @@ module.exports = {
     args: 'start',
     instances: 1,
     autorestart: true,
+    watch: false,
   }, {
     name: 'graphql',
     script: './bin/graphql.js',
-    instances: 2,
+    instances: 1,
     autorestart: true,
-    watch: ['./config', './graphql', './lib', './model', './service'],
+    watch: ['config', 'graphql', 'lib', 'model', 'service'],
   }, {
     name: 'express',
     script: './bin/express.js',
-    instances: 2,
+    instances: 1,
     autorestart: true,
-    watch: ['./config', './express', './lib', './model', './service', './view'],
+    watch: ['config', 'express', 'lib', 'model', 'service', 'view'],
   }],
 };

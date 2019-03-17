@@ -221,34 +221,34 @@ class ShopService {
 
     const { data: auctions = [] } = await this.app.service.AuctionService.getAll({
       customerId,
-      ext: { customerShopAccountId, fields: ['pageId'] },
+      ext: { customerShopAccountId, fields: ['oid'] },
     });
 
     pagesToCreate = auctions
       .filter(
-        ({ pageId }) => !pages.find(({ id, author }) => `${id}` === pageId && author === 'tokdeck'),
+        ({ oid }) => !pages.find(({ id, author }) => `${id}` === oid && author === 'tokdeck'),
       ).map(({ auctionId, path, title }) => ({
         auctionId,
         page: {
           author: 'tokdeck',
           handle: path,
-          body_html: `<!-- TOKDECK: start -->Hello ${auctionId}<!-- TOKDECK: end -->`,
+          body_html: `<!-- TOKDECK: start --><!-- Do not delete or modify code between "TOKDECK: start" and "TOKDECK: end" comments. This will break auction logic or link between this page and auction will be lost -->Hello ${auctionId}<!-- TOKDECK: end -->`,
           title,
         },
       }));
 
     pagesToUpdate = auctions
       .filter(
-        ({ pageId, title, path }) => {
-          const page = pages.find(({ id, author }) => `${id}` === pageId && author === 'tokdeck');
+        ({ oid, title, path }) => {
+          const page = pages.find(({ id, author }) => `${id}` === oid && author === 'tokdeck');
           return page && (page.title !== title || page.handle !== path);
         },
       ).map(({
-        pageId,
+        oid,
         path,
         title,
       }) => ({
-        pageId,
+        oid,
         page: {
           handle: path,
           title,
@@ -257,28 +257,28 @@ class ShopService {
 
     pagesToRemove = pages
       .filter(
-        ({ id, author }) => author === 'tokdeck' && !auctions.find(({ pageId }) => `${id}` === pageId),
-      ).map(({ id }) => ({ pageId: id }));
+        ({ id, author }) => author === 'tokdeck' && !auctions.find(({ oid }) => `${id}` === oid),
+      ).map(({ id }) => ({ oid: id }));
 
     if (pagesToCreate.length) {
       for (const { page, auctionId } of pagesToCreate) {
-        const { page: { id: pageId } } = await shopifyPost('/admin/pages.json', { page });
+        const { page: { id: oid } } = await shopifyPost('/admin/pages.json', { page });
         auctionsToUpdate.push({
           auctionId,
-          pageId,
+          oid,
         });
       }
     }
 
     if (pagesToUpdate.length) {
-      for (const { page, pageId } of pagesToUpdate) {
-        await shopifyPut(`/admin/pages/${pageId}.json`, { page });
+      for (const { page, oid } of pagesToUpdate) {
+        await shopifyPut(`/admin/pages/${oid}.json`, { page });
       }
     }
 
     if (pagesToRemove.length) {
-      for (const { pageId } of pagesToRemove) {
-        await shopifyDelete(`/admin/pages/${pageId}.json`);
+      for (const { oid } of pagesToRemove) {
+        await shopifyDelete(`/admin/pages/${oid}.json`);
       }
     }
 
@@ -287,6 +287,7 @@ class ShopService {
         await this.app.service.AuctionService.update({
           customerId,
           auctionId,
+          noSync: true,
           ...data,
         });
       }

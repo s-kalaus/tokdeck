@@ -49,6 +49,6 @@ services:
     volumes:
      - ./tokdeck-runner/conf/init-prod.sh:/root/host/init.sh
      - ..:/var/www/tokdeck
-     - ./tokdeck-runner/conf/ecosystem.config.js:/var/www/tokdeck/ecosystem.config.js
+     - ./tokdeck-runner/conf/ecosystem.config-prod.js:/var/www/tokdeck/ecosystem.config.js
     networks:
       tokdeck-prod:

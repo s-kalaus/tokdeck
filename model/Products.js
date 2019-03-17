@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const Auctions = sequelize.define('Auctions', {
-    auctionId: {
+  const Products = sequelize.define('Products', {
+    productId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
@@ -15,24 +15,23 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(50),
       defaultValue: null,
     },
-    path: {
-      type: DataTypes.STRING(50),
-      defaultValue: null,
-    },
     oid: {
       type: DataTypes.STRING(50),
       defaultValue: null,
     },
   });
 
-  Auctions.associate = (models) => {
-    Auctions.belongsTo(models.Customers, {
+  Products.associate = (models) => {
+    Products.belongsTo(models.Auctions, {
+      foreignKey: 'auctionId',
+    });
+    Products.belongsTo(models.Customers, {
       foreignKey: 'customerId',
     });
-    Auctions.belongsTo(models.CustomerShopAccounts, {
+    Products.belongsTo(models.CustomerShopAccounts, {
       foreignKey: 'customerShopAccountId',
     });
   };
 
-  return Auctions;
+  return Products;
 };

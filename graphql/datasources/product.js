@@ -1,6 +1,6 @@
 const { ApolloError } = require('apollo-server');
 
-class AuctionDS {
+class ProductDS {
   constructor(app) {
     this.app = app;
   }
@@ -9,19 +9,28 @@ class AuctionDS {
     this.context = config.context;
   }
 
-  async getAll({ customerId = this.context.customerId, ext = this.context.ext } = {}) {
-    const resultAuction = await this.app.service.AuctionService.getAll({ customerId, ext });
+  async getAll({
+    customerId = this.context.customerId,
+    auctionId,
+    ext = this.context.ext,
+  } = {}) {
+    const resultProduct = await this.app.service.ProductService
+      .getAll({ customerId, auctionId, ext });
 
-    if (!resultAuction.success) {
-      throw new ApolloError(resultAuction.message, 500, resultAuction);
+    if (!resultProduct.success) {
+      throw new ApolloError(resultProduct.message, 500, resultProduct);
     }
 
-    return resultAuction.data;
+    return resultProduct.data;
   }
 
-  async getOne({ customerId = this.context.customerId, auctionId, ext = this.context.ext }) {
-    const resultAuction = await this.app.service.AuctionService
-      .getOne({ customerId, auctionId, ext });
+  async getOne({
+    customerId = this.context.customerId,
+    productId,
+    ext = this.context.ext,
+  }) {
+    const resultAuction = await this.app.service.ProductService
+      .getOne({ customerId, productId, ext });
 
     if (!resultAuction.success) {
       throw new ApolloError(resultAuction.message, 500, resultAuction);
@@ -32,14 +41,16 @@ class AuctionDS {
 
   async add({
     title,
-    path,
+    oid,
     customerId = this.context.customerId,
+    auctionId,
     ext = this.context.ext,
   }) {
-    const resultAdd = await this.app.service.AuctionService.add({
+    const resultAdd = await this.app.service.ProductService.add({
+      oid,
       title,
-      path,
       customerId,
+      auctionId,
       ext,
     });
 
@@ -51,16 +62,12 @@ class AuctionDS {
   }
 
   async update({
-    auctionId,
-    title,
-    path,
+    productId,
     customerId = this.context.customerId,
     ext = this.context.ext,
   }) {
-    const resultUpdate = await this.app.service.AuctionService.update({
-      auctionId,
-      title,
-      path,
+    const resultUpdate = await this.app.service.ProductService.update({
+      productId,
       customerId,
       ext,
     });
@@ -69,18 +76,16 @@ class AuctionDS {
       throw new ApolloError(resultUpdate.message, 500, resultUpdate);
     }
 
-    const { auctionId: theAuctionId } = resultUpdate.data;
-
-    return { auctionId: theAuctionId };
+    return resultUpdate.data;
   }
 
   async remove({
-    auctionId,
+    productId,
     customerId = this.context.customerId,
     ext = this.context.ext,
   }) {
-    const resultRemove = await this.app.service.AuctionService.remove({
-      auctionId,
+    const resultRemove = await this.app.service.ProductService.remove({
+      productId,
       customerId,
       ext,
     });
@@ -93,4 +98,4 @@ class AuctionDS {
   }
 }
 
-module.exports = AuctionDS;
+module.exports = ProductDS;
