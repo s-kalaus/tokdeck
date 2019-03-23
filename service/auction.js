@@ -96,28 +96,45 @@ class AuctionService {
       };
     }
 
+    const transaction = await this.app.sequelize.transaction();
+
     const auction = await this.app.sequelize.models.Auctions.create({
       customerId,
       title,
       path,
       ...customerShopAccountId ? { customerShopAccountId } : {},
-    });
+    }, { transaction });
 
     const { auctionId } = auction;
 
     if (customerShopAccountId) {
       try {
-        await this.app.service.ShopService.syncPages({
-          customerId,
+        const result = await this.app.service.ShopAuctionService.add({
+          auctionId,
+          title,
+          handle: path,
           customerShopAccountId,
         });
-      } catch (e) {
+
+        await this.app.sequelize.models.Auctions.update({
+          oid: result.oid,
+        }, {
+          fields: ['oid'],
+          where: {
+            auctionId,
+          },
+          transaction,
+        });
+      } catch (err) {
+        await transaction.rollback();
         return {
           success: false,
-          message: 'Auction sync error',
+          message: JSON.stringify(err),
         };
       }
     }
+
+    await transaction.commit();
 
     this.app.logger.info('AuctionService (add): %s', auctionId);
 
@@ -134,9 +151,7 @@ class AuctionService {
     auctionId,
     title,
     path,
-    oid,
     ext = {},
-    noSync = false,
   }) {
     const { customerShopAccountId = null } = ext;
     if (!auctionId) {
@@ -146,7 +161,7 @@ class AuctionService {
       };
     }
 
-    await this.getOne({ customerId, auctionId, ext });
+    const { data: { oid } } = await this.getOne({ customerId, auctionId, ext: { fields: ['oid'] } });
 
     const data = {};
 
@@ -202,30 +217,35 @@ class AuctionService {
       data.path = path;
     }
 
-    if (oid) {
-      data.oid = oid;
-    }
+    const transaction = await this.app.sequelize.transaction();
 
     await this.app.sequelize.models.Auctions.update(data, {
       fields: Object.keys(data),
       where: {
         auctionId,
       },
+      transaction,
     });
 
-    if (!noSync) {
+    if (oid && customerShopAccountId) {
       try {
-        await this.app.service.ShopService.syncPages({
-          customerId,
+        await this.app.service.ShopAuctionService.update({
+          auctionId,
+          oid,
+          title,
+          handle: path,
           customerShopAccountId,
         });
-      } catch (e) {
+      } catch (err) {
+        await transaction.rollback();
         return {
           success: false,
-          message: 'Auction sync error',
+          message: JSON.stringify(err),
         };
       }
     }
+
+    await transaction.commit();
 
     this.app.logger.info('AuctionService (update): %s', auctionId);
 
@@ -251,26 +271,32 @@ class AuctionService {
       };
     }
 
-    await this.getOne({ customerId, auctionId, ext });
+    const { data: { oid } } = await this.getOne({ customerId, auctionId, ext: { fields: ['oid'] } });
+
+    const transaction = await this.app.sequelize.transaction();
 
     await this.app.sequelize.models.Auctions.destroy({
       where: {
         auctionId,
         ...customerShopAccountId ? { customerShopAccountId } : {},
       },
+      transaction,
     });
 
     try {
-      await this.app.service.ShopService.syncPages({
-        customerId,
+      await this.app.service.ShopAuctionService.remove({
+        oid,
         customerShopAccountId,
       });
-    } catch (e) {
+    } catch (err) {
+      await transaction.rollback();
       return {
         success: false,
-        message: 'Auction sync error',
+        message: JSON.stringify(err),
       };
     }
+
+    await transaction.commit();
 
     this.app.logger.info('AuctionService (remove): %s', auctionId);
 
