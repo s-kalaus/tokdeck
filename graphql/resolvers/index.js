@@ -6,6 +6,11 @@ const auctionGetAll = require('./auction-get-all');
 const auctionAdd = require('./auction-add');
 const auctionUpdate = require('./auction-update');
 const auctionRemove = require('./auction-remove');
+const productGetOne = require('./product-get-one');
+const productGetAll = require('./product-get-all');
+const productAdd = require('./product-add');
+const productUpdate = require('./product-update');
+const productRemove = require('./product-remove');
 const tokenGetOne = require('./token-get-one');
 const messageAdded = require('./message-added');
 
@@ -14,6 +19,8 @@ module.exports = {
     me: customerGetOne,
     auction: auctionGetOne,
     auctions: auctionGetAll,
+    product: productGetOne,
+    products: productGetAll,
     token: tokenGetOne,
   },
   Mutation: {
@@ -22,6 +29,9 @@ module.exports = {
     auctionAdd,
     auctionUpdate,
     auctionRemove,
+    productAdd,
+    productUpdate,
+    productRemove,
   },
   Subscription: {
     messageAdded,
@@ -32,5 +42,8 @@ module.exports = {
   },
   AuctionPayload: {
     auction: auctionGetOne,
+  },
+  ProductPayload: {
+    product: productGetOne,
   },
 };

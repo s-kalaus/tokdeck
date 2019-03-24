@@ -161,7 +161,7 @@ class AuctionService {
       };
     }
 
-    const { data: { oid } } = await this.getOne({ customerId, auctionId, ext: { fields: ['oid'] } });
+    const { data: { oid, title: titlePrev, path: pathPrev } } = await this.getOne({ customerId, auctionId, ext: { fields: ['oid'] } });
 
     const data = {};
 
@@ -223,18 +223,29 @@ class AuctionService {
       fields: Object.keys(data),
       where: {
         auctionId,
+        ...customerShopAccountId ? { customerShopAccountId } : {},
       },
       transaction,
     });
 
     if (oid && customerShopAccountId) {
       try {
-        await this.app.service.ShopAuctionService.update({
+        const result = await this.app.service.ShopAuctionService.update({
           auctionId,
           oid,
-          title,
-          handle: path,
+          title: title || titlePrev,
+          handle: path || pathPrev,
           customerShopAccountId,
+        });
+
+        await this.app.sequelize.models.Auctions.update({
+          oid: result.oid,
+        }, {
+          fields: ['oid'],
+          where: {
+            auctionId,
+          },
+          transaction,
         });
       } catch (err) {
         await transaction.rollback();

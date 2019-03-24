@@ -13,6 +13,8 @@ import { AuctionProductComponent } from '@app/component/auction/product.componen
 import { AuctionRemoveComponent } from '@app/component/auction/remove.component';
 import { SignupComponent } from '@app/component/signup.component';
 import { SigninComponent } from '@app/component/signin.component';
+import { ProductListComponent } from '@app/component/product/list.component';
+import { ProductAddComponent } from '@app/component/product/add.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -21,10 +23,13 @@ export const routes: Routes = [
     { path: '', redirectTo: 'list', pathMatch: 'full' },
     { path: 'list', component: AuctionListComponent },
     { path: 'add', component: AuctionAddComponent },
-    { path: 'edit/:auctionId', component: AuctionEditComponent },
-    { path: 'show/:auctionId', component: AuctionShowComponent },
-    { path: 'product/:auctionId', component: AuctionProductComponent },
-    { path: 'remove/:auctionId', component: AuctionRemoveComponent },
+    { path: ':auctionId/edit', component: AuctionEditComponent },
+    { path: ':auctionId/show', component: AuctionShowComponent },
+    { path: ':auctionId/product', component: AuctionProductComponent, children: [
+        { path: '', component: ProductListComponent },
+        { path: 'add', component: ProductAddComponent },
+    ] },
+    { path: ':auctionId/remove', component: AuctionRemoveComponent },
   ] },
   { path: 'bot', component: BotComponent, canActivate: [AuthRouteService] },
   { path: 'subscription', component: SubscriptionComponent, canActivate: [AuthRouteService] },

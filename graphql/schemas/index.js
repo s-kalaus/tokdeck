@@ -5,6 +5,8 @@ const typeDefs = gql`
     me: Customer!
     auction(auctionId: ID!): Auction!
     auctions: [Auction]!
+    product(productId: ID!): Product!
+    products(auctionId: ID!): [Product]!
     token: String!
   }
 
@@ -14,6 +16,9 @@ const typeDefs = gql`
     auctionAdd(title: String!, path: String!): AuctionPayload!
     auctionUpdate(auctionId: ID!, title: String, path: String): AuctionPayload!
     auctionRemove(auctionId: ID!): Result!
+    productAdd(auctionId: ID!, oid: String!, title: String): ProductPayload!
+    productUpdate(productId: ID!): ProductPayload!
+    productRemove(productId: ID!): Result!
   }
 
   type Customer {
@@ -29,6 +34,12 @@ const typeDefs = gql`
     path: String
   }
 
+  type Product {
+    productId: ID!
+    auctionId: ID
+    title: String
+  }
+
   type Subscription {
     messageAdded: Message
   }
@@ -42,6 +53,10 @@ const typeDefs = gql`
   
   type AuctionPayload {
     auction: Auction!
+  }
+  
+  type ProductPayload {
+    product: Product!
   }
 
   type TokenPayload {

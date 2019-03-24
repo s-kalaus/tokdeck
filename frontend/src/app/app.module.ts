@@ -30,6 +30,8 @@ import { AuctionFormComponent } from '@app/component/auction/form.component';
 import { AuctionShowComponent } from '@app/component/auction/show.component';
 import { AuctionProductComponent } from '@app/component/auction/product.component';
 import { AuctionRemoveComponent } from '@app/component/auction/remove.component';
+import { ProductListComponent } from '@app/component/product/list.component';
+import { ProductAddComponent } from '@app/component/product/add.component';
 import { SignupComponent } from '@app/component/signup.component';
 import { SigninComponent } from '@app/component/signin.component';
 import { HeaderComponent } from '@app/component/header.component';
@@ -59,6 +61,8 @@ export function tokenGetter() {
     AuctionProductComponent,
     AuctionShowComponent,
     AuctionRemoveComponent,
+    ProductListComponent,
+    ProductAddComponent,
     BotComponent,
     SubscriptionComponent,
     SignupComponent,

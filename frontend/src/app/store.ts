@@ -1,11 +1,17 @@
 import { Action } from 'redux';
 import { ActionService, TokdeckAction } from '@app/service/action.service';
-import { Auction, Customer, Token } from '@app/interface';
+import { Auction, Customer, Product, Token } from '@app/interface';
 
 export interface IAppState {
   auctionAll: Auction[];
   auctionOne: {
     [auctionId: string]: Auction,
+  };
+  productAll: {
+    [auctionId: string]: Product[],
+  };
+  productOne: {
+    [productId: string]: Product,
   };
   token: Token;
   customer: Customer | null;
@@ -14,6 +20,8 @@ export interface IAppState {
 export const INITIAL_STATE: IAppState = {
   auctionAll: [],
   auctionOne: {},
+  productAll: {},
+  productOne: {},
   token: null,
   customer: null,
 };
@@ -49,6 +57,30 @@ export function rootReducer(lastState: IAppState, action: TokdeckAction): IAppSt
             ...(lastState.auctionOne[key].auctionId === action.meta.auctionId
               ? {}
               : { [key]: lastState.auctionOne[key] }
+            ),
+          }),
+          {},
+        ),
+      };
+    case ActionService.PRODUCT_ALL:
+      return {
+        ...lastState,
+        productAll: { ...lastState.productAll, [action.meta.auctionId]: action.payload },
+      };
+    case ActionService.PRODUCT_ONE:
+      return {
+        ...lastState,
+        productOne: { ...lastState.productOne, [action.meta.productId]: action.payload },
+      };
+    case ActionService.PRODUCT_REMOVE:
+      return {
+        ...lastState,
+        productOne: Object.keys(lastState.productOne).reduce(
+          (productOne, key) => ({
+            ...productOne,
+            ...(lastState.productOne[key].productId === action.meta.productId
+                ? {}
+                : { [key]: lastState.productOne[key] }
             ),
           }),
           {},

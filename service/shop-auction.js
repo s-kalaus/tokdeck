@@ -14,6 +14,18 @@ class ShopAuctionService extends ShopService {
     };
   }
 
+  async getOne({
+    oid,
+    customerShopAccountId,
+  }) {
+    const shopify = await this.initShopify({ customerShopAccountId });
+    const shopifyGet = promisify(shopify.get.bind(shopify));
+
+    const { page: { body_html: bodyHtml } } = await shopifyGet(`/admin/pages/${oid}.json`);
+
+    return { bodyHtml };
+  }
+
   async add({
     auctionId,
     title,
@@ -50,16 +62,27 @@ class ShopAuctionService extends ShopService {
     customerShopAccountId,
   }) {
     const shopify = await this.initShopify({ customerShopAccountId });
-    const shopifyGet = promisify(shopify.get.bind(shopify));
     const shopifyPut = promisify(shopify.put.bind(shopify));
-
-    let { page: { body_html: bodyHtml } } = await shopifyGet(`/admin/pages/${oid}.json`);
-
     const { start, end } = ShopAuctionService.getPageHtmlWrap();
-    const found = bodyHtml.match(new RegExp(`${start}.*${end}`, 'i'));
-
     const bodyHtmlInner = ShopAuctionService.getPageHtml({ auctionId });
+    let bodyHtml;
 
+    try {
+      [{ bodyHtml }] = [await this.getOne({ oid, customerShopAccountId })];
+    } catch (err) {
+      if (err.code !== 404) {
+        throw err;
+      }
+
+      return this.add({
+        auctionId,
+        title,
+        handle,
+        customerShopAccountId,
+      });
+    }
+
+    const found = bodyHtml.match(new RegExp(`${start}.*${end}`, 'i'));
     bodyHtml = found
       ? bodyHtml.replace(`${start}.*${end}`, bodyHtmlInner)
       : `${bodyHtml}${bodyHtmlInner}`;
@@ -71,6 +94,8 @@ class ShopAuctionService extends ShopService {
     };
 
     await shopifyPut(`/admin/pages/${oid}.json`, { page });
+
+    return { oid };
   }
 
   async remove({
@@ -80,7 +105,13 @@ class ShopAuctionService extends ShopService {
     const shopify = await this.initShopify({ customerShopAccountId });
     const shopifyDelete = promisify(shopify.delete.bind(shopify));
 
-    await shopifyDelete(`/admin/pages/${oid}.json`);
+    try {
+      await shopifyDelete(`/admin/pages/${oid}.json`);
+    } catch (err) {
+      if (err.code !== 404) {
+        throw err;
+      }
+    }
   }
 }
 

@@ -29,9 +29,9 @@
           <div class="dropdown" dropdown>
             <a href="javascript:;" class="mdi mdi-menu" dropdownToggle></a>
             <ul *dropdownMenu class="dropdown-menu dropdown-menu-right">
-              <li><a class="dropdown-item" [routerLink]="[layoutService.path, 'auction', 'edit', auction.auctionId]" translate>global.edit</a></li>
-              <li><a class="dropdown-item" [routerLink]="[layoutService.path, 'auction', 'product', auction.auctionId]" translate>auction.list.products</a></li>
-              <li><a class="dropdown-item" [routerLink]="[layoutService.path, 'auction', 'remove', auction.auctionId]" translate>global.remove</a></li>
+              <li><a class="dropdown-item" [routerLink]="[layoutService.path, 'auction', auction.auctionId, 'edit']" translate>global.edit</a></li>
+              <li><a class="dropdown-item" [routerLink]="[layoutService.path, 'auction', auction.auctionId, 'product']" translate>auction.list.products</a></li>
+              <li><a class="dropdown-item" [routerLink]="[layoutService.path, 'auction', auction.auctionId, 'remove']" translate>global.remove</a></li>
             </ul>
           </div>
         </td>

@@ -103,28 +103,43 @@ class ProductService {
       };
     }
 
+    const transaction = await this.app.sequelize.transaction();
+
     const product = await this.app.sequelize.models.Products.create({
       customerId,
       title,
       oid,
       ...customerShopAccountId ? { customerShopAccountId } : {},
-    });
+    }, { transaction });
 
     const { productId } = product;
 
     if (customerShopAccountId) {
       try {
-        await this.app.service.ShopService.syncProducts({
-          customerId,
+        const result = await this.app.service.ShopProductService.getOne({
+          oid,
           customerShopAccountId,
         });
-      } catch (e) {
+
+        await this.app.sequelize.models.Products.update({
+          title: result.title,
+        }, {
+          fields: ['title'],
+          where: {
+            productId,
+          },
+          transaction,
+        });
+      } catch (err) {
+        await transaction.rollback();
         return {
           success: false,
-          message: 'Products sync error',
+          message: JSON.stringify(err),
         };
       }
     }
+
+    await transaction.commit();
 
     this.app.logger.info('ProductService (add): %s', productId);
 
@@ -140,7 +155,6 @@ class ProductService {
     customerId,
     productId,
     ext = {},
-    noSync = false,
   }) {
     const { customerShopAccountId = null } = ext;
     if (!productId) {
@@ -150,30 +164,47 @@ class ProductService {
       };
     }
 
-    await this.getOne({ customerId, productId, ext });
+    const { oid } = await this.getOne({ customerId, productId, ext: { fields: ['oid'] } });
 
     const data = {};
+
+    const transaction = await this.app.sequelize.transaction();
 
     await this.app.sequelize.models.Products.update(data, {
       fields: Object.keys(data),
       where: {
         productId,
+        ...customerShopAccountId ? { customerShopAccountId } : {},
       },
+      transaction,
     });
 
-    if (!noSync) {
+    if (customerShopAccountId) {
       try {
-        await this.app.service.ShopService.syncProducts({
-          customerId,
+        const result = await this.app.service.ShopProductService.getOne({
+          oid,
           customerShopAccountId,
         });
-      } catch (e) {
+
+        await this.app.sequelize.models.Products.update({
+          title: result.title,
+        }, {
+          fields: ['title'],
+          where: {
+            productId,
+          },
+          transaction,
+        });
+      } catch (err) {
+        await transaction.rollback();
         return {
           success: false,
-          message: 'Products sync error',
+          message: JSON.stringify(err),
         };
       }
     }
+
+    await transaction.commit();
 
     this.app.logger.info('ProductService (update): %s', productId);
 
@@ -207,18 +238,6 @@ class ProductService {
         ...customerShopAccountId ? { customerShopAccountId } : {},
       },
     });
-
-    try {
-      await this.app.service.ShopService.syncProducts({
-        customerId,
-        customerShopAccountId,
-      });
-    } catch (e) {
-      return {
-        success: false,
-        message: 'Products sync error',
-      };
-    }
 
     this.app.logger.info('ProductService (remove): %s', productId);
 
