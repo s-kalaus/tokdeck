@@ -7,6 +7,7 @@ export const auctionUpdate = graphqlTag`
         auctionId
         title
         path
+        productsCount
       }
     }
   }

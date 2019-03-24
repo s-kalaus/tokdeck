@@ -11,6 +11,7 @@ const productGetAll = require('./product-get-all');
 const productAdd = require('./product-add');
 const productUpdate = require('./product-update');
 const productRemove = require('./product-remove');
+const productCount = require('./product-count');
 const tokenGetOne = require('./token-get-one');
 const messageAdded = require('./message-added');
 
@@ -39,6 +40,9 @@ module.exports = {
   TokenPayload: {
     customer: customerGetOne,
     token: tokenGetOne,
+  },
+  Auction: {
+    productsCount: productCount,
   },
   AuctionPayload: {
     auction: auctionGetOne,

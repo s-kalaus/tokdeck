@@ -37,7 +37,7 @@ export class AuctionFormComponent extends BaseFormComponent {
     public alertService: AlertService,
     public loadingService: LoadingService,
   ) {
-    super(zone, formBuilder, alertService);
+    super(zone, formBuilder, alertService, layoutService);
     this.createForm();
   }
 
@@ -55,6 +55,7 @@ export class AuctionFormComponent extends BaseFormComponent {
       path: this.form.value.path,
     }]).pipe(
       catchError(err => this.onError(err)),
+      catchError(err => this.layoutService.processApiError(err)),
     ).subscribe(() => this.onSuccess());
   }
 

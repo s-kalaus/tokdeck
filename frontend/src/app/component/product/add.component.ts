@@ -28,7 +28,7 @@ export class ProductAddComponent extends BaseFormComponent {
     public layoutService: LayoutService,
     public productService: ProductService,
   ) {
-    super(zone, formBuilder, alertService);
+    super(zone, formBuilder, alertService, layoutService);
     this.createForm();
   }
 

@@ -35,6 +35,7 @@ import { ProductAddComponent } from '@app/component/product/add.component';
 import { SignupComponent } from '@app/component/signup.component';
 import { SigninComponent } from '@app/component/signin.component';
 import { HeaderComponent } from '@app/component/header.component';
+import { ProductRemoveComponent } from '@app/component/product/remove.component';
 
 export function createTranslateLoader(http: HttpClient) {
 
@@ -63,6 +64,7 @@ export function tokenGetter() {
     AuctionRemoveComponent,
     ProductListComponent,
     ProductAddComponent,
+    ProductRemoveComponent,
     BotComponent,
     SubscriptionComponent,
     SignupComponent,

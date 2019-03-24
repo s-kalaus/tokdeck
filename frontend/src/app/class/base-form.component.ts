@@ -19,6 +19,7 @@ export class BaseFormComponent extends BaseComponent {
     protected zone: NgZone,
     protected formBuilder: FormBuilder,
     protected alertService: AlertService,
+    public layoutService: LayoutService,
   ) {
     super();
   }
@@ -92,9 +93,11 @@ export class BaseFormComponent extends BaseComponent {
       if (customErrors.length) {
         customErrors.forEach(text => this.alertService.show({ text }));
       }
+
+      return throwError(err);
     }
 
-    return throwError(err);
+    return this.layoutService.processApiError(err);
   }
 
   validateForm() {

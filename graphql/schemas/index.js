@@ -32,6 +32,7 @@ const typeDefs = gql`
     auctionId: ID!
     title: String
     path: String
+    productsCount: Int
   }
 
   type Product {

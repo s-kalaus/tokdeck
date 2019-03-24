@@ -6,7 +6,7 @@ import { BaseComponent } from '@app/class/base.component';
 import { TranslateService } from '@ngx-translate/core';
 import { AuctionService } from '@app/service/auction.service';
 import { Auction } from '@app/interface';
-import { delay } from 'rxjs/operators';
+import { catchError, delay } from 'rxjs/operators';
 import { IAppState } from '@app/store';
 import { Observable } from 'rxjs';
 
@@ -27,6 +27,8 @@ export class AuctionListComponent extends BaseComponent {
   }
 
   init() {
-    this.auctionService.fetchAll().subscribe();
+    this.auctionService.fetchAll().pipe(
+      catchError(err => this.layoutService.processApiError(err)),
+    ).subscribe();
   }
 }

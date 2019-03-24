@@ -31,6 +31,30 @@ class ProductService {
     };
   }
 
+  async getCount({
+    customerId,
+    auctionId,
+    ext = {},
+    includeDeleted = false,
+  }) {
+    const { customerShopAccountId = null, fields = [] } = ext;
+    const count = await this.app.sequelize.models.Products.count({
+      where: {
+        ...includeDeleted ? {} : { isDeleted: false },
+        customerId,
+        auctionId,
+        ...customerShopAccountId ? { customerShopAccountId } : {},
+      },
+    });
+
+    this.app.logger.info('ProductService (getCount): %s', count);
+
+    return {
+      success: true,
+      data: count,
+    };
+  }
+
   async getOne({ customerId, productId, ext = {} }) {
     const { customerShopAccountId = null, fields = [] } = ext;
     const fetchFields = ['productId', 'auctionId', 'title', ...fields];
@@ -67,8 +91,8 @@ class ProductService {
     const sameTitle = await this.app.sequelize.models.Products.count({
       where: {
         isDeleted: false,
-        customerId,
         auctionId,
+        customerId,
         ...customerShopAccountId ? { customerShopAccountId } : {},
         title,
       },
@@ -87,6 +111,7 @@ class ProductService {
     const sameOid = await this.app.sequelize.models.Products.count({
       where: {
         isDeleted: false,
+        auctionId,
         customerId,
         ...customerShopAccountId ? { customerShopAccountId } : {},
         oid,
@@ -107,6 +132,7 @@ class ProductService {
 
     const product = await this.app.sequelize.models.Products.create({
       customerId,
+      auctionId,
       title,
       oid,
       ...customerShopAccountId ? { customerShopAccountId } : {},
@@ -130,11 +156,11 @@ class ProductService {
           },
           transaction,
         });
-      } catch (err) {
+      } catch ({ message }) {
         await transaction.rollback();
         return {
           success: false,
-          message: JSON.stringify(err),
+          message,
         };
       }
     }

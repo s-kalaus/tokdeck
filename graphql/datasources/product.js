@@ -24,6 +24,21 @@ class ProductDS {
     return resultProduct.data;
   }
 
+  async getCount({
+    customerId = this.context.customerId,
+    auctionId,
+    ext = this.context.ext,
+  } = {}) {
+    const resultProduct = await this.app.service.ProductService
+      .getCount({ customerId, auctionId, ext });
+
+    if (!resultProduct.success) {
+      throw new ApolloError(resultProduct.message, 500, resultProduct);
+    }
+
+    return resultProduct.data;
+  }
+
   async getOne({
     customerId = this.context.customerId,
     productId,

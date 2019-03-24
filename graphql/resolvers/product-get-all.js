@@ -1,3 +1,7 @@
-const productGetAll = async (_, __, { dataSources }) => dataSources.productDS.getAll();
+const productGetAll = async (
+  _,
+  { auctionId },
+  { dataSources },
+) => dataSources.productDS.getAll({ auctionId });
 
 module.exports = productGetAll;

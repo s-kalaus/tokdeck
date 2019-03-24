@@ -6,6 +6,7 @@ export const auctionFetchAll = graphqlTag`
       auctionId
       title
       path
+      productsCount
     }
   }
 `;

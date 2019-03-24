@@ -1,5 +1,4 @@
 <ng-container *ngIf="!loadingService.isLoading('auction-detail')">
-  Products {{ (auction$ | async) ? (auction$ | async).auctionId : null }}
   <router-outlet></router-outlet>
 </ng-container>
 <ng-container *ngIf="loadingService.isLoadingAnimated('auction-detail')">

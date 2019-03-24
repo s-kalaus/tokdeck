@@ -15,6 +15,7 @@ import { SignupComponent } from '@app/component/signup.component';
 import { SigninComponent } from '@app/component/signin.component';
 import { ProductListComponent } from '@app/component/product/list.component';
 import { ProductAddComponent } from '@app/component/product/add.component';
+import { ProductRemoveComponent } from '@app/component/product/remove.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -28,6 +29,7 @@ export const routes: Routes = [
     { path: ':auctionId/product', component: AuctionProductComponent, children: [
         { path: '', component: ProductListComponent },
         { path: 'add', component: ProductAddComponent },
+        { path: ':productId/remove', component: ProductRemoveComponent },
     ] },
     { path: ':auctionId/remove', component: AuctionRemoveComponent },
   ] },

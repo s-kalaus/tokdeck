@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { BaseComponent } from '@app/class/base.component';
-import { LoadingService } from '@app/service';
+import { LayoutService, LoadingService } from '@app/service';
 import { AuctionService } from '@app/service/auction.service';
 import { ActivatedRoute } from '@angular/router';
-import { first, map } from 'rxjs/operators';
+import { catchError, first, map } from 'rxjs/operators';
 import { Auction } from '@app/interface';
 import { NgRedux, select } from '@angular-redux/store';
 import { IAppState } from '@app/store';
@@ -22,6 +22,7 @@ export class AuctionEditComponent extends BaseComponent {
     private auctionService: AuctionService,
     public loadingService: LoadingService,
     private ngRedux: NgRedux<IAppState>,
+    public layoutService: LayoutService,
   ) {
     super();
   }
@@ -33,7 +34,9 @@ export class AuctionEditComponent extends BaseComponent {
         map(params => params.auctionId),
       )
       .subscribe((auctionId) => {
-        this.auctionService.fetchOne(auctionId).subscribe();
+        this.auctionService.fetchOne(auctionId).pipe(
+          catchError(err => this.layoutService.processApiError(err)),
+        ).subscribe();
         this.auction$ = this.ngRedux.select(['auctionOne', auctionId]);
       });
   }
