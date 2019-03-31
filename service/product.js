@@ -37,7 +37,7 @@ class ProductService {
     ext = {},
     includeDeleted = false,
   }) {
-    const { customerShopAccountId = null, fields = [] } = ext;
+    const { customerShopAccountId = null } = ext;
     const count = await this.app.sequelize.models.Products.count({
       where: {
         ...includeDeleted ? {} : { isDeleted: false },
