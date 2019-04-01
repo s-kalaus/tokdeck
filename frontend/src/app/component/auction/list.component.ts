@@ -23,7 +23,7 @@ export class AuctionListComponent extends BaseComponent {
     private store: Store<{ auctionAll: Auction[] }>,
   ) {
     super();
-    this.auctions$ = this.store.pipe(select('store', 'auctionAll'));
+    this.auctions$ = this.store.pipe(select('auction', 'auctionAll'));
   }
 
   init() {

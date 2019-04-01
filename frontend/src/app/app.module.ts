@@ -11,7 +11,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { StoreModule } from '@ngrx/store';
 
-import { reducer } from './reducer';
+import { commonReducer } from './reducer/common.reducer';
+import { auctionReducer } from './reducer/auction.reducer';
+import { productReducer } from './reducer/product.reducer';
 import { routes } from '@app/data/routes';
 import { GraphQLModule } from './graphql.module';
 import { AppComponent } from '@app/component/app.component';
@@ -94,7 +96,11 @@ export function tokenGetter() {
     BsDropdownModule.forRoot(),
     FormsModule,
     ReactiveFormsModule,
-    StoreModule.forRoot({ store: reducer }),
+    StoreModule.forRoot({
+      common: commonReducer,
+      auction: auctionReducer,
+      product: productReducer,
+    }),
   ],
   providers: [
     CookieService,

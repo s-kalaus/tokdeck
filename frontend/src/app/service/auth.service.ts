@@ -5,8 +5,7 @@ import { CookieService } from 'ngx-cookie-service';
 
 import { LayoutService } from '@app/service/layout.service';
 import { Store } from '@ngrx/store';
-import { TokenSet } from '@app/action';
-import { State, Token } from '@app/interface';
+import { TokenSet } from '@app/action/common.action';
 
 @Injectable({
   providedIn: 'root',

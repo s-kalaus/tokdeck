@@ -8,7 +8,7 @@ import { productAdd } from '@app/mutation/product-add';
 import { LoadingService } from '@app/service/loading.service';
 import { LayoutService } from '@app/service/layout.service';
 import { Store } from '@ngrx/store';
-import { ProductAdd, ProductAll, ProductOne, ProductRemove } from '@app/action';
+import { ProductAdd, ProductAll, ProductOne, ProductRemove } from '@app/action/product.action';
 
 @Injectable({
   providedIn: 'root',

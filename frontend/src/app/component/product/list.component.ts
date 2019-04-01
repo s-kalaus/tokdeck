@@ -38,7 +38,7 @@ export class ProductListComponent extends BaseComponent {
         this.productService.fetchAll(auctionId).pipe(
           catchError(err => this.layoutService.processApiError(err)),
         ).subscribe();
-        this.products$ = this.store.pipe(select('store', 'productAll', auctionId));
+        this.products$ = this.store.pipe(select('product', 'productAll', auctionId));
       });
   }
 }

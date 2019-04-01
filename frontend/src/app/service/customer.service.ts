@@ -11,7 +11,7 @@ import { customerLogin } from '@app/mutation';
 import { first, switchMap } from 'rxjs/operators';
 import { LoadingService } from '@app/service/loading.service';
 import { Store, select } from '@ngrx/store';
-import { CustomerSet } from '@app/action';
+import { CustomerSet } from '@app/action/common.action';
 
 @Injectable({
   providedIn: 'root',
@@ -34,8 +34,8 @@ export class CustomerService {
   }
 
   init() {
-    this.token$ = this.store.pipe(select('store', 'token'));
-    this.customer$ = this.store.pipe(select('store', 'customer'));
+    this.token$ = this.store.pipe(select('common', 'token'));
+    this.customer$ = this.store.pipe(select('common', 'customer'));
     this.token$.subscribe(token => this.setToken(token));
     this.customer$.subscribe(customer => this.customer = customer);
   }

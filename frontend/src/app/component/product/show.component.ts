@@ -49,7 +49,7 @@ export class ProductShowComponent extends BaseComponent {
             return this.layoutService.processApiError(err);
           }),
         ).subscribe();
-        this.product$ = this.store.pipe(select('store', 'productOne', productId));
+        this.product$ = this.store.pipe(select('product', 'productOne', productId));
       });
   }
 }

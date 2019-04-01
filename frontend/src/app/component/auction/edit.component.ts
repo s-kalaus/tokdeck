@@ -36,7 +36,7 @@ export class AuctionEditComponent extends BaseComponent {
         this.auctionService.fetchOne(auctionId).pipe(
           catchError(err => this.layoutService.processApiError(err)),
         ).subscribe();
-        this.auction$ = this.store.pipe(select('store', 'auctionOne', auctionId));
+        this.auction$ = this.store.pipe(select('auction', 'auctionOne', auctionId));
       });
   }
 }

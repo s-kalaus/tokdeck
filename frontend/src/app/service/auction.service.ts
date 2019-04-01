@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { Observable, of } from 'rxjs';
-import { Auction, State } from '@app/interface';
+import { Auction } from '@app/interface';
 import { first, switchMap } from 'rxjs/operators';
 import { auctionFetchAll, auctionFetchOne, auctionRemove, auctionUpdate } from '@app/mutation';
 import { auctionAdd } from '@app/mutation/auction-add';
 import { LoadingService } from '@app/service/loading.service';
 import { LayoutService } from '@app/service/layout.service';
-import { AuctionAdd, AuctionAll, AuctionOne, AuctionRemove } from '@app/action';
+import { AuctionAdd, AuctionAll, AuctionOne, AuctionRemove } from '@app/action/auction.action';
 import { Store } from '@ngrx/store';
 
 @Injectable({

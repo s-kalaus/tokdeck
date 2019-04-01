@@ -40,7 +40,7 @@ export class AuctionRemoveComponent extends BaseComponent {
             return this.layoutService.processApiError(err);
           }),
         ).subscribe();
-        this.auction$ = this.store.pipe(select('store', 'auctionOne', auctionId));
+        this.auction$ = this.store.pipe(select('auction', 'auctionOne', auctionId));
       });
   }
 
