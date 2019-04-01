@@ -1,35 +1,26 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { Observable, of } from 'rxjs';
-import { Auction } from '@app/interface';
+import { Auction, State } from '@app/interface';
 import { first, switchMap } from 'rxjs/operators';
 import { auctionFetchAll, auctionFetchOne, auctionRemove, auctionUpdate } from '@app/mutation';
 import { auctionAdd } from '@app/mutation/auction-add';
 import { LoadingService } from '@app/service/loading.service';
-import { ActionService } from '@app/service/action.service';
-import { dispatch } from '@angular-redux/store';
 import { LayoutService } from '@app/service/layout.service';
+import { AuctionAdd, AuctionAll, AuctionOne, AuctionRemove } from '@app/action';
+import { Store } from '@ngrx/store';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuctionService {
-  @dispatch() auctionAll = auctions =>
-    this.actionService.auctionAll(auctions)
-  @dispatch() auctionOne = auction =>
-    this.actionService.auctionOne(this.apollo.getClient(), auction)
-  @dispatch() auctionAdd = auction =>
-    this.actionService.auctionAdd(this.apollo.getClient(), auction)
-  @dispatch() auctionRemove = auction =>
-    this.actionService.auctionRemove(this.apollo.getClient(), auction)
-
   private auctions: Auction[] = [];
 
   constructor(
     private apollo: Apollo,
     private loadingService: LoadingService,
-    private actionService: ActionService,
     public layoutService: LayoutService,
+    private store: Store<any>,
   ) {
   }
 
@@ -41,7 +32,10 @@ export class AuctionService {
       .pipe(
         first(),
         switchMap((result: any) => {
-          this.auctionAll(result.data.auctions);
+          const payload = {
+            auctions: result.data.auctions,
+          };
+          this.store.dispatch(new AuctionAll(payload));
           return of(result.data.auctions);
         }),
       );
@@ -59,7 +53,11 @@ export class AuctionService {
       .pipe(
         first(),
         switchMap((result: any) => {
-          this.auctionOne(result.data.auction);
+          const payload = {
+            auction: result.data.auction,
+            apollo: this.apollo.getClient(),
+          };
+          this.store.dispatch(new AuctionOne(payload));
           return of(result.data.auction);
         }),
       );
@@ -78,7 +76,11 @@ export class AuctionService {
       .pipe(
         first(),
         switchMap((result) => {
-          this.auctionAdd(result.data.auctionAdd.auction);
+          const payload = {
+            auction: result.data.auctionAdd.auction,
+            apollo: this.apollo.getClient(),
+          };
+          this.store.dispatch(new AuctionAdd(payload));
           return of(result.data.auctionAdd.auction);
         }),
       );
@@ -98,7 +100,11 @@ export class AuctionService {
       .pipe(
         first(),
         switchMap((result) => {
-          this.auctionOne(result.data.auctionUpdate.auction);
+          const payload = {
+            auction: result.data.auctionUpdate.auction,
+            apollo: this.apollo.getClient(),
+          };
+          this.store.dispatch(new AuctionOne(payload));
           return of(result.data.auctionUpdate.auction);
         }),
       );
@@ -116,7 +122,11 @@ export class AuctionService {
       .pipe(
         first(),
         switchMap(() => {
-          this.auctionRemove(auction);
+          const payload = {
+            auction,
+            apollo: this.apollo.getClient(),
+          };
+          this.store.dispatch(new AuctionRemove(payload));
           return of(auction);
         }),
       );

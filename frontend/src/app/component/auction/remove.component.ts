@@ -5,9 +5,8 @@ import { ActivatedRoute } from '@angular/router';
 import { AuctionService } from '@app/service/auction.service';
 import { AlertService, LayoutService, LoadingService } from '@app/service';
 import { catchError, first, map } from 'rxjs/operators';
-import { Observable, of, throwError } from 'rxjs';
-import { NgRedux } from '@angular-redux/store';
-import { IAppState } from '@app/store';
+import { Observable } from 'rxjs';
+import { Store, select } from '@ngrx/store';
 
 @Component({
   selector: 'app-auction-remove',
@@ -23,7 +22,7 @@ export class AuctionRemoveComponent extends BaseComponent {
     public loadingService: LoadingService,
     public layoutService: LayoutService,
     public alertService: AlertService,
-    private ngRedux: NgRedux<IAppState>,
+    private store: Store<{ auctionOne: Auction }>,
   ) {
     super();
   }
@@ -41,7 +40,7 @@ export class AuctionRemoveComponent extends BaseComponent {
             return this.layoutService.processApiError(err);
           }),
         ).subscribe();
-        this.auction$ = this.ngRedux.select(['auctionOne', auctionId]);
+        this.auction$ = this.store.pipe(select('store', 'auctionOne', auctionId));
       });
   }
 

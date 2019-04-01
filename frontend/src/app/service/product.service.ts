@@ -6,28 +6,19 @@ import { switchMap, first } from 'rxjs/operators';
 import { productFetchAll, productFetchOne, productRemove, productUpdate } from '@app/mutation';
 import { productAdd } from '@app/mutation/product-add';
 import { LoadingService } from '@app/service/loading.service';
-import { ActionService } from '@app/service/action.service';
-import { dispatch } from '@angular-redux/store';
 import { LayoutService } from '@app/service/layout.service';
+import { Store } from '@ngrx/store';
+import { ProductAdd, ProductAll, ProductOne, ProductRemove } from '@app/action';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
-  @dispatch() productAll = (auctionId, products) =>
-    this.actionService.productAll(auctionId, products)
-  @dispatch() productOne = product =>
-    this.actionService.productOne(this.apollo.getClient(), product)
-  @dispatch() productAdd = product =>
-    this.actionService.productAdd(this.apollo.getClient(), product)
-  @dispatch() productRemove = product =>
-    this.actionService.productRemove(this.apollo.getClient(), product)
-
   constructor(
     private apollo: Apollo,
     private loadingService: LoadingService,
-    private actionService: ActionService,
     public layoutService: LayoutService,
+    private store: Store<any>,
   ) {
   }
 
@@ -42,7 +33,11 @@ export class ProductService {
       .pipe(
         first(),
         switchMap((result: any) => {
-          this.productAll(auctionId, result.data.products);
+          const payload = {
+            auctionId,
+            products: result.data.products,
+          };
+          this.store.dispatch(new ProductAll(payload));
           return of(result.data.products);
         }),
       );
@@ -60,7 +55,11 @@ export class ProductService {
       .pipe(
         first(),
         switchMap((result: any) => {
-          this.productOne(result.data.product);
+          const payload = {
+            product: result.data.product,
+            apollo: this.apollo.getClient(),
+          };
+          this.store.dispatch(new ProductOne(payload));
           return of(result.data.product);
         }),
       );
@@ -79,7 +78,11 @@ export class ProductService {
       .pipe(
         first(),
         switchMap((result) => {
-          this.productAdd(result.data.productAdd.product);
+          const payload = {
+            product: result.data.productAdd.product,
+            apollo: this.apollo.getClient(),
+          };
+          this.store.dispatch(new ProductAdd(payload));
           return of(result.data.productAdd.product);
         }),
       );
@@ -97,7 +100,11 @@ export class ProductService {
       .pipe(
         first(),
         switchMap((result) => {
-          this.productOne(result.data.productUpdate.product);
+          const payload = {
+            product: result.data.productUpdate.product,
+            apollo: this.apollo.getClient(),
+          };
+          this.store.dispatch(new ProductOne(payload));
           return of(result.data.productUpdate.product);
         }),
       );
@@ -115,7 +122,11 @@ export class ProductService {
       .pipe(
         first(),
         switchMap(() => {
-          this.productRemove(product);
+          const payload = {
+            product,
+            apollo: this.apollo.getClient(),
+          };
+          this.store.dispatch(new ProductRemove(payload));
           return of(product);
         }),
       );

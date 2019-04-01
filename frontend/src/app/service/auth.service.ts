@@ -3,19 +3,15 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 
-import { Customer } from '@app/interface';
 import { LayoutService } from '@app/service/layout.service';
-import { BehaviorSubject } from 'rxjs';
-import { dispatch } from '@angular-redux/store';
-import { ActionService } from '@app/service/action.service';
+import { Store } from '@ngrx/store';
+import { TokenSet } from '@app/action';
+import { State, Token } from '@app/interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  @dispatch() tokenSet = token =>
-    this.actionService.tokenSet(token)
-
   private token: string = null;
   subscriptionClient: any;
 
@@ -24,7 +20,7 @@ export class AuthService {
     private layoutService: LayoutService,
     private router: Router,
     private cookieService: CookieService,
-    private actionService: ActionService,
+    private store: Store<any>,
   ) {
 
     this.init();
@@ -58,7 +54,10 @@ export class AuthService {
     }
 
     this.token = token;
-    this.tokenSet(this.token);
+    const payload = {
+      token: this.token,
+    };
+    this.store.dispatch(new TokenSet(payload));
   }
 
   getToken() {
@@ -71,7 +70,10 @@ export class AuthService {
 
   authError() {
     this.token = null;
-    this.tokenSet(this.token);
+    const payload = {
+      token: this.token,
+    };
+    this.store.dispatch(new TokenSet(payload));
     const url = this.layoutService.isApp ? ['error'] : ['signin'];
     this.layoutService.navigate(url);
   }

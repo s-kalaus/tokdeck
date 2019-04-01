@@ -1,29 +1,26 @@
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { Auction, Customer, Token } from '@app/interface';
+import { Observable, of } from 'rxjs';
+import { Customer, Token } from '@app/interface';
 import { Apollo } from 'apollo-angular';
 import graphqlTag from 'graphql-tag';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 import { AuthService } from '@app/service/auth.service';
-import { auctionAdd, customerLogin } from '@app/mutation';
-import { first, switchMap, take } from 'rxjs/operators';
+import { customerLogin } from '@app/mutation';
+import { first, switchMap } from 'rxjs/operators';
 import { LoadingService } from '@app/service/loading.service';
-import { dispatch, select } from '@angular-redux/store';
-import { ActionService } from '@app/service/action.service';
+import { Store, select } from '@ngrx/store';
+import { CustomerSet } from '@app/action';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CustomerService {
-  @dispatch() customerSet = customer =>
-    this.actionService.customerSet(customer)
-
-  @select('token') readonly token$: Observable<Token | null>;
-  @select('customer') readonly customer$: Observable<Customer | null>;
+  token$: Observable<Token | null>;
+  customer$: Observable<Customer | null>;
   private customerId: string;
-  private customer: Customer;
+  private customer: Customer | null;
 
   constructor(
     private authService: AuthService,
@@ -31,12 +28,14 @@ export class CustomerService {
     private apollo: Apollo,
     private jwtHelperService: JwtHelperService,
     private loadingService: LoadingService,
-    private actionService: ActionService,
+    private store: Store<any>,
   ) {
     this.init();
   }
 
   init() {
+    this.token$ = this.store.pipe(select('store', 'token'));
+    this.customer$ = this.store.pipe(select('store', 'customer'));
     this.token$.subscribe(token => this.setToken(token));
     this.customer$.subscribe(customer => this.customer = customer);
   }
@@ -72,11 +71,14 @@ export class CustomerService {
       .pipe(
         first(),
         switchMap((result: any) => {
-          this.customerSet({
-            customerId: result.data.me.customerId,
-            firstName: result.data.me.firstName,
-            lastName: result.data.me.lastName,
-          });
+          const payload = {
+            customer: {
+              customerId: result.data.me.customerId,
+              firstName: result.data.me.firstName,
+              lastName: result.data.me.lastName,
+            },
+          };
+          this.store.dispatch(new CustomerSet(payload));
           return of(result.data.me);
         }),
       );

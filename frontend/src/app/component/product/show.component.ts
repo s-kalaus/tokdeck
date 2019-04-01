@@ -2,18 +2,18 @@ import { Component } from '@angular/core';
 import { BaseComponent } from '@app/class/base.component';
 import { Product } from '@app/interface';
 import { ActivatedRoute } from '@angular/router';
-import { AlertService, LayoutService, LoadingService } from '@app/service';
+import { LayoutService, LoadingService } from '@app/service';
 import { catchError, first, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { ProductService } from '@app/service/product.service';
 import { select, Store } from '@ngrx/store';
 
 @Component({
-  selector: 'app-product-remove',
-  templateUrl: './remove.component.html',
-  styleUrls: ['./remove.component.scss'],
+  selector: 'app-product-show',
+  templateUrl: './show.component.html',
+  styleUrls: ['./show.component.scss'],
 })
-export class ProductRemoveComponent extends BaseComponent {
+export class ProductShowComponent extends BaseComponent {
   auctionId: string;
   product$: Observable<Product>;
 
@@ -22,7 +22,6 @@ export class ProductRemoveComponent extends BaseComponent {
     private productService: ProductService,
     public loadingService: LoadingService,
     public layoutService: LayoutService,
-    public alertService: AlertService,
     private store: Store<{ productOne: Product }>,
   ) {
     super();
@@ -52,16 +51,5 @@ export class ProductRemoveComponent extends BaseComponent {
         ).subscribe();
         this.product$ = this.store.pipe(select('store', 'productOne', productId));
       });
-  }
-
-  remove(product: Product) {
-    this.productService.remove(product).pipe(
-      catchError(err => this.layoutService.processApiError(err)),
-    ).subscribe(() => this.onSuccess());
-  }
-
-  onSuccess() {
-    this.alertService.show({ text: 'product.remove.error.success', type: 'success' });
-    this.layoutService.navigate(['auction', this.auctionId, 'product']);
   }
 }

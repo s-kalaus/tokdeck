@@ -17,7 +17,7 @@
       </tr>
       <tr *ngFor="let auction of (auctions$ | async)">
         <td class="px-3">
-          <a [routerLink]="[layoutService.path, 'auction', 'show', auction.auctionId]">{{ auction.title }}</a>
+          <a [routerLink]="[layoutService.path, 'auction', auction.auctionId, 'show']">{{ auction.title }}</a>
         </td>
         <td class="px-3 text-center">
           0

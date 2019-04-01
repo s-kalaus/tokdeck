@@ -1,14 +1,12 @@
 import { Component } from '@angular/core';
-import { NgRedux } from '@angular-redux/store';
-
 import { LayoutService, LoadingService } from '@app/service';
 import { BaseComponent } from '@app/class/base.component';
 import { ProductService } from '@app/service/product.service';
 import { Product } from '@app/interface';
-import { IAppState } from '@app/store';
 import { Observable } from 'rxjs';
 import { catchError, first, map } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
+import { select, Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-product-list',
@@ -24,7 +22,7 @@ export class ProductListComponent extends BaseComponent {
     private productService: ProductService,
     public layoutService: LayoutService,
     public loadingService: LoadingService,
-    private ngRedux: NgRedux<IAppState>,
+    private store: Store<{ productAll: Product[] }>,
   ) {
     super();
   }
@@ -40,7 +38,7 @@ export class ProductListComponent extends BaseComponent {
         this.productService.fetchAll(auctionId).pipe(
           catchError(err => this.layoutService.processApiError(err)),
         ).subscribe();
-        this.products$ = this.ngRedux.select(['productAll', auctionId]);
+        this.products$ = this.store.pipe(select('store', 'productAll', auctionId));
       });
   }
 }

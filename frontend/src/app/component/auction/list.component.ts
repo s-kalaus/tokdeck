@@ -1,13 +1,11 @@
-import { Component, Inject } from '@angular/core';
-import { select } from '@angular-redux/store';
+import { Component } from '@angular/core';
 
-import { CustomerService, LayoutService, LoadingService } from '@app/service';
+import { LayoutService, LoadingService } from '@app/service';
 import { BaseComponent } from '@app/class/base.component';
-import { TranslateService } from '@ngx-translate/core';
 import { AuctionService } from '@app/service/auction.service';
 import { Auction } from '@app/interface';
-import { catchError, delay } from 'rxjs/operators';
-import { IAppState } from '@app/store';
+import { catchError } from 'rxjs/operators';
+import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -16,14 +14,16 @@ import { Observable } from 'rxjs';
   styleUrls: ['./list.component.scss'],
 })
 export class AuctionListComponent extends BaseComponent {
-  @select('auctionAll') readonly auctions$: Observable<Auction[]>;
+  auctions$: Observable<Auction[]>;
 
   constructor(
     private auctionService: AuctionService,
     public layoutService: LayoutService,
     public loadingService: LoadingService,
+    private store: Store<{ auctionAll: Auction[] }>,
   ) {
     super();
+    this.auctions$ = this.store.pipe(select('store', 'auctionAll'));
   }
 
   init() {

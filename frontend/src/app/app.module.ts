@@ -9,10 +9,9 @@ import { BsDropdownModule } from 'ngx-bootstrap';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { NgReduxModule, NgRedux } from '@angular-redux/store';
+import { StoreModule } from '@ngrx/store';
 
-import { rootReducer, IAppState, INITIAL_STATE } from './store';
-import { environment } from '@app/../environments/environment';
+import { reducer } from './reducer';
 import { routes } from '@app/data/routes';
 import { GraphQLModule } from './graphql.module';
 import { AppComponent } from '@app/component/app.component';
@@ -36,6 +35,7 @@ import { SignupComponent } from '@app/component/signup.component';
 import { SigninComponent } from '@app/component/signin.component';
 import { HeaderComponent } from '@app/component/header.component';
 import { ProductRemoveComponent } from '@app/component/product/remove.component';
+import { ProductShowComponent } from '@app/component/product/show.component';
 
 export function createTranslateLoader(http: HttpClient) {
 
@@ -65,6 +65,7 @@ export function tokenGetter() {
     ProductListComponent,
     ProductAddComponent,
     ProductRemoveComponent,
+    ProductShowComponent,
     BotComponent,
     SubscriptionComponent,
     SignupComponent,
@@ -93,7 +94,7 @@ export function tokenGetter() {
     BsDropdownModule.forRoot(),
     FormsModule,
     ReactiveFormsModule,
-    NgReduxModule,
+    StoreModule.forRoot({ store: reducer }),
   ],
   providers: [
     CookieService,
@@ -103,9 +104,4 @@ export function tokenGetter() {
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(ngRedux: NgRedux<IAppState>) {
-    ngRedux.configureStore(
-      rootReducer,
-      INITIAL_STATE);
-  }
 }

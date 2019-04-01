@@ -1,4 +1,4 @@
-export class Auction {
+export interface Auction {
   auctionId: string;
   title: string;
 }

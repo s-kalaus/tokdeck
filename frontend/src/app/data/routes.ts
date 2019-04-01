@@ -16,6 +16,7 @@ import { SigninComponent } from '@app/component/signin.component';
 import { ProductListComponent } from '@app/component/product/list.component';
 import { ProductAddComponent } from '@app/component/product/add.component';
 import { ProductRemoveComponent } from '@app/component/product/remove.component';
+import { ProductShowComponent } from '@app/component/product/show.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -30,6 +31,7 @@ export const routes: Routes = [
         { path: '', component: ProductListComponent },
         { path: 'add', component: ProductAddComponent },
         { path: ':productId/remove', component: ProductRemoveComponent },
+        { path: ':productId/show', component: ProductShowComponent },
     ] },
     { path: ':auctionId/remove', component: AuctionRemoveComponent },
   ] },
