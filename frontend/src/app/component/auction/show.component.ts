@@ -7,6 +7,7 @@ import { LayoutService, LoadingService } from '@app/service';
 import { catchError, first, map } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { selectAuctionOne } from '@app/selector/auction.selector';
 
 @Component({
   selector: 'app-auction-show',
@@ -36,7 +37,7 @@ export class AuctionShowComponent extends BaseComponent {
         this.auctionService.fetchOne(auctionId).pipe(
           catchError(err => this.layoutService.processApiError(err)),
         ).subscribe();
-        this.auction$ = this.store.pipe(select('auction', 'auctionOne', auctionId));
+        this.auction$ = this.store.pipe(select(selectAuctionOne, { auctionId }));
       });
   }
 }

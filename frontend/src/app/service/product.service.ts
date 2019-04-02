@@ -33,11 +33,10 @@ export class ProductService {
       .pipe(
         first(),
         switchMap((result: any) => {
-          const payload = {
+          this.store.dispatch(new ProductAll({
             auctionId,
             products: result.data.products,
-          };
-          this.store.dispatch(new ProductAll(payload));
+          }));
           return of(result.data.products);
         }),
       );
@@ -55,11 +54,9 @@ export class ProductService {
       .pipe(
         first(),
         switchMap((result: any) => {
-          const payload = {
+          this.store.dispatch(new ProductOne({
             product: result.data.product,
-            apollo: this.apollo.getClient(),
-          };
-          this.store.dispatch(new ProductOne(payload));
+          }));
           return of(result.data.product);
         }),
       );
@@ -78,11 +75,9 @@ export class ProductService {
       .pipe(
         first(),
         switchMap((result) => {
-          const payload = {
+          this.store.dispatch(new ProductAdd({
             product: result.data.productAdd.product,
-            apollo: this.apollo.getClient(),
-          };
-          this.store.dispatch(new ProductAdd(payload));
+          }));
           return of(result.data.productAdd.product);
         }),
       );
@@ -100,11 +95,9 @@ export class ProductService {
       .pipe(
         first(),
         switchMap((result) => {
-          const payload = {
+          this.store.dispatch(new ProductOne({
             product: result.data.productUpdate.product,
-            apollo: this.apollo.getClient(),
-          };
-          this.store.dispatch(new ProductOne(payload));
+          }));
           return of(result.data.productUpdate.product);
         }),
       );
@@ -122,11 +115,9 @@ export class ProductService {
       .pipe(
         first(),
         switchMap(() => {
-          const payload = {
+          this.store.dispatch(new ProductRemove({
             product,
-            apollo: this.apollo.getClient(),
-          };
-          this.store.dispatch(new ProductRemove(payload));
+          }));
           return of(product);
         }),
       );

@@ -7,6 +7,7 @@ import { Auction } from '@app/interface';
 import { catchError } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { selectAuctionAll } from '@app/selector/auction.selector';
 
 @Component({
   selector: 'app-auction-list',
@@ -23,7 +24,7 @@ export class AuctionListComponent extends BaseComponent {
     private store: Store<{ auctionAll: Auction[] }>,
   ) {
     super();
-    this.auctions$ = this.store.pipe(select('auction', 'auctionAll'));
+    this.auctions$ = this.store.pipe(select(selectAuctionAll));
   }
 
   init() {

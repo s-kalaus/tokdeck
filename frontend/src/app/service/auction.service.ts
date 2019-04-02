@@ -7,7 +7,7 @@ import { auctionFetchAll, auctionFetchOne, auctionRemove, auctionUpdate } from '
 import { auctionAdd } from '@app/mutation/auction-add';
 import { LoadingService } from '@app/service/loading.service';
 import { LayoutService } from '@app/service/layout.service';
-import { AuctionAdd, AuctionAll, AuctionOne, AuctionRemove } from '@app/action/auction.action';
+import { AuctionAll, AuctionOne, AuctionRemove } from '@app/action/auction.action';
 import { Store } from '@ngrx/store';
 
 @Injectable({
@@ -32,10 +32,9 @@ export class AuctionService {
       .pipe(
         first(),
         switchMap((result: any) => {
-          const payload = {
+          this.store.dispatch(new AuctionAll({
             auctions: result.data.auctions,
-          };
-          this.store.dispatch(new AuctionAll(payload));
+          }));
           return of(result.data.auctions);
         }),
       );
@@ -53,11 +52,9 @@ export class AuctionService {
       .pipe(
         first(),
         switchMap((result: any) => {
-          const payload = {
+          this.store.dispatch(new AuctionOne({
             auction: result.data.auction,
-            apollo: this.apollo.getClient(),
-          };
-          this.store.dispatch(new AuctionOne(payload));
+          }));
           return of(result.data.auction);
         }),
       );
@@ -76,11 +73,9 @@ export class AuctionService {
       .pipe(
         first(),
         switchMap((result) => {
-          const payload = {
+          this.store.dispatch(new AuctionOne({
             auction: result.data.auctionAdd.auction,
-            apollo: this.apollo.getClient(),
-          };
-          this.store.dispatch(new AuctionAdd(payload));
+          }));
           return of(result.data.auctionAdd.auction);
         }),
       );
@@ -100,11 +95,9 @@ export class AuctionService {
       .pipe(
         first(),
         switchMap((result) => {
-          const payload = {
+          this.store.dispatch(new AuctionOne({
             auction: result.data.auctionUpdate.auction,
-            apollo: this.apollo.getClient(),
-          };
-          this.store.dispatch(new AuctionOne(payload));
+          }));
           return of(result.data.auctionUpdate.auction);
         }),
       );
@@ -122,11 +115,9 @@ export class AuctionService {
       .pipe(
         first(),
         switchMap(() => {
-          const payload = {
+          this.store.dispatch(new AuctionRemove({
             auction,
-            apollo: this.apollo.getClient(),
-          };
-          this.store.dispatch(new AuctionRemove(payload));
+          }));
           return of(auction);
         }),
       );

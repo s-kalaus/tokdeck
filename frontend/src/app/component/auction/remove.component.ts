@@ -7,6 +7,7 @@ import { AlertService, LayoutService, LoadingService } from '@app/service';
 import { catchError, first, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Store, select } from '@ngrx/store';
+import { selectAuctionOne } from '@app/selector/auction.selector';
 
 @Component({
   selector: 'app-auction-remove',
@@ -40,7 +41,7 @@ export class AuctionRemoveComponent extends BaseComponent {
             return this.layoutService.processApiError(err);
           }),
         ).subscribe();
-        this.auction$ = this.store.pipe(select('auction', 'auctionOne', auctionId));
+        this.auction$ = this.store.pipe(select(selectAuctionOne, { auctionId }));
       });
   }
 

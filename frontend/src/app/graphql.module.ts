@@ -48,6 +48,16 @@ export function createApollo(httpLink: HttpLink, authService: AuthService) {
   return {
     link,
     cache: new InMemoryCache(),
+    defaultOptions: {
+      watchQuery: {
+        fetchPolicy: 'network-only',
+        errorPolicy: 'ignore',
+      },
+      query: {
+        fetchPolicy: 'network-only',
+        errorPolicy: 'all',
+      },
+    },
   };
 }
 
