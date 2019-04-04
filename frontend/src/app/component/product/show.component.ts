@@ -7,6 +7,7 @@ import { catchError, first, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { ProductService } from '@app/service/product.service';
 import { select, Store } from '@ngrx/store';
+import { selectProductOne } from '@app/selector/product.selector';
 
 @Component({
   selector: 'app-product-show',
@@ -49,7 +50,7 @@ export class ProductShowComponent extends BaseComponent {
             return this.layoutService.processApiError(err);
           }),
         ).subscribe();
-        this.product$ = this.store.pipe(select('product', 'productOne', productId));
+        this.product$ = this.store.pipe(select(selectProductOne, { productId }));
       });
   }
 }

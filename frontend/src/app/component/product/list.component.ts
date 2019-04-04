@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { catchError, first, map } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import { select, Store } from '@ngrx/store';
-import { selectProductAll } from '@app/selector/product.selector';
+import { selectProductAllByAuction } from '@app/selector/product.selector';
 
 @Component({
   selector: 'app-product-list',
@@ -39,7 +39,7 @@ export class ProductListComponent extends BaseComponent {
         this.productService.fetchAll(auctionId).pipe(
           catchError(err => this.layoutService.processApiError(err)),
         ).subscribe();
-        this.products$ = this.store.pipe(select(selectProductAll, { auctionId }));
+        this.products$ = this.store.pipe(select(selectProductAllByAuction, { auctionId }));
       });
   }
 }

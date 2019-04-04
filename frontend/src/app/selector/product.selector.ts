@@ -16,6 +16,16 @@ export const selectProductMap = createSelector(
   productMap,
 );
 
+export const selectProductIdsByAuction = createSelector(
+  selectProductState,
+  ({ byAuctionId, entities }, { auctionId }) => byAuctionId[auctionId],
+);
+
+export const selectProductAllByAuction = createSelector(
+  [selectProductAll, selectProductIdsByAuction],
+  (products, ids) => products.filter(({ productId }) => ids.includes(productId)),
+);
+
 export const selectProductOne = createSelector(
   selectProductMap,
   (entities, { productId }) => entities[productId],

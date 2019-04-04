@@ -39,7 +39,7 @@ export function productReducer(
         byAuctionId: {
           ...state.byAuctionId,
           [auctionId]: [
-            ...state.byAuctionId[auctionId],
+            ...state.byAuctionId[auctionId] || [],
             productId,
           ],
         },
